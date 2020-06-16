@@ -7,7 +7,7 @@
   <body>
     <h1>REVIEWERS HEROES</h1>
     <% users.forEach(function(user){ %>
-      <img src="<%=user.avatarUrl%>"> <%= user.userName %><br>
+      <img src="<%=user.avatarUrl%>"> <%= user.userName %> <%= user.totalAssignees %> <a href="/details/<%=user.id%>">Detalhes</a> <br>
     <% }); %>
   </body>
 </html>

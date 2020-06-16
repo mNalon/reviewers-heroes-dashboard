@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>REVIEWERS HEROES</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Detalhes</h1>
+    <% mergeRequests.forEach(function(mr){ %>
+      <%= mr.title %>  criado:<%= mr.createdAt %>  atualizado:<%= mr.updatedAt %>  autor:<%= mr.author.userName %> <a href="<%=mr.webUrl%>">Link do MR</a> <br>
+    <% }); %>
+  </body>
+</html>
+
