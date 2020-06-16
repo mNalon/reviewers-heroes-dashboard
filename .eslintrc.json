@@ -1,0 +1,101 @@
+{
+  "root": true,
+  "extends": "airbnb-base",
+  "env": {
+    "jest": true,
+    "node": true
+  },
+  "globals": {
+    "expect": true
+  },
+  "rules": {
+    "arrow-body-style": "off",
+    "arrow-parens": [
+      "error",
+      "always"
+    ],
+    "class-methods-use-this": "off",
+    "comma-dangle": [
+      "error",
+      "never"
+    ],
+    "consistent-return": "off",
+    "eqeqeq": "off",
+    "func-names": [
+      "error",
+      "as-needed"
+    ],
+    "global-require": "off",
+    "implicit-arrow-linebreak": "off",
+    "new-cap": "off",
+    "no-console": "off",
+    "no-shadow": "off",
+    "no-restricted-syntax": "off",
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1,
+        "maxBOF": 0,
+        "maxEOF": 1
+      }
+    ],
+    "no-param-reassign": [
+      "error",
+      {
+        "props": false
+      }
+    ],
+    "no-prototype-builtins": "off",
+    "no-underscore-dangle": "off",
+    "no-unused-expressions": [
+      "error",
+      {
+        "allowShortCircuit": true,
+        "allowTernary": true
+      }
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true,
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "operator-linebreak": [
+      "error",
+      "before",
+      {
+        "overrides": {
+          "=": "after"
+        }
+      }
+    ],
+    "padded-blocks": [
+      "error",
+      "never"
+    ],
+    "semi": [
+      "error",
+      "never"
+    ],
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "import/prefer-default-export": "off",
+    "import/no-default-export": [
+      "error"
+    ]
+  }
+}
