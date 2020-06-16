@@ -4,7 +4,8 @@ const router = express.Router()
 
 /* GET home page. */
 router.get('/', (req, res) => {
-  res.render('index', { title: 'Express' })
+  req.repositories.user.getAllUsersByGroupId(919)
+    .then((users) => res.render('index', { users }))
 })
 
 export { router }

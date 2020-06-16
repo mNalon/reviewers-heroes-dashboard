@@ -6,6 +6,11 @@ import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 
 import { router as indexRouter } from './routes/index'
+import { createClients } from './clients'
+import { createRepositories } from './repositories'
+
+const clients = createClients()
+const repositories = createRepositories({ clients })
 
 const app = express()
 
@@ -18,6 +23,12 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
+
+// injecting repositories
+app.use((req, res, next) => {
+  req.repositories = repositories
+  next()
+})
 
 app.use('/', indexRouter)
 
