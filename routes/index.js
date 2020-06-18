@@ -1,5 +1,7 @@
 import express from 'express'
 
+import { DANGER_LIMIT_ASSIGNEES } from '../config'
+
 const router = express.Router()
 
 /* GET home page. */
@@ -15,7 +17,9 @@ router.get('/', (req, res) => {
         }
       }))
     ))
-    .then((users) => res.render('index', { users }))
+    .then((users) => res.render('index', {
+      users, dangerLimitAssignees: DANGER_LIMIT_ASSIGNEES
+    }))
 })
 
 router.get('/details/:id', (req, res) => {
