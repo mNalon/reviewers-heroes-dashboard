@@ -2,10 +2,35 @@
 <html>
   <%- include('head'); %>
   <body>
-    <h1>Detalhes</h1>
-    <% mergeRequests.forEach(function(mr){ %>
-      <%= mr.title %>  criado:<%= mr.createdAt %>  atualizado:<%= mr.updatedAt %>  autor:<%= mr.author.userName %> <a href="<%=mr.webUrl%>">Link do MR</a> <br>
-    <% }); %>
+    <h1>Detalhes dos MRs</h1>
+    <table class="table table-bordered table-active">
+      <thead>
+        <tr>
+          <th scope="col">Título</th>
+          <th scope="col">Data de criação</th>
+          <th scope="col">Data de atualização</th>
+          <th scope="col">Autor</th>
+          <th scope="col">Link</th>
+          <th scope="col">Tempo estimado (min)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% mergeRequests.forEach(function(mr){ %>
+          <tr>
+            <th scope="row"><%= mr.title %></th>
+            <td><%= mr.createdAt %></td>
+            <td><%= mr.updatedAt %></td>
+            <td><%= mr.author.userName %></td>
+            <td><a href="<%=mr.webUrl%>"><%=mr.webUrl%></a></td>
+            <td><%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %></td>
+          </tr>
+        <% }); %>
+        <tr>
+          <th colspan="5"></th>
+          <td><b>Total: <%=totalEstimatedTime%></b></td>
+        </tr>
+      </tbody>
+    </table>
   </body>
 </html>
 
