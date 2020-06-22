@@ -28,14 +28,26 @@ router.get('/', (req, res) => {
 
 router.get('/details/:id', (req, res) => {
   const userId = req.params.id
-  req.repositories.mergeRequest.getAllOpennedAssignedMRByUserId(userId)
-    .then((mergeRequests) => res.render('details', {
-      mergeRequests,
-      totalEstimatedTime: mergeRequests.reduce((total, mr) => {
-        return mr.timeEstimate ? total + (mr.timeEstimate / 60) : total
-      }, 0)
-    }))
-    .catch(errorHandler(req, res))
+
+  const mergeRequestsInfo = [
+    req.repositories.mergeRequest.getAllOpennedAssignedMRByUserId(userId),
+    req.repositories.mergeRequest.getMergedAssignedMRsOnTheLastWeekByUserId(userId)
+  ]
+
+  Promise.all(mergeRequestsInfo)
+    .then(
+      ([
+        openedMRs,
+        mergedMRs
+      ]) =>
+        res.render('details', {
+          openedMRs,
+          totalEstimatedTime: openedMRs.reduce((total, mr) => (
+            mr.timeEstimate ? total + (mr.timeEstimate / 60) : total
+          ), 0),
+          mergedMRs
+        })
+    ).catch(errorHandler(req, res))
 })
 
 export { router }

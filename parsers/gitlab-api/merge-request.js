@@ -11,7 +11,8 @@ const parser = ({
   web_url: webUrl,
   time_stats: {
     time_estimate: timeEstimate
-  }
+  },
+  merged_at: mergedAt
 }) => ({
   id,
   title,
@@ -21,7 +22,8 @@ const parser = ({
   assignee: parseUser(assignee),
   workInProgress,
   webUrl,
-  timeEstimate
+  timeEstimate,
+  mergedAt
 })
 
 export { parser }
