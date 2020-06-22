@@ -7,6 +7,10 @@ const router = express.Router()
 const errorHandler = (req, res) => (err) =>
   res.render('error', { message: 'Error', error: err })
 
+const totalEstimated = (mrs) => mrs.reduce((total, mr) => (
+  mr.timeEstimate ? total + (mr.timeEstimate / 60) : total
+), 0)
+
 /* GET home page. */
 router.get('/', (req, res) => {
   req.repositories.user.getAllUsersByGroupId(919)
@@ -42,9 +46,8 @@ router.get('/details/:id', (req, res) => {
       ]) =>
         res.render('details', {
           openedMRs,
-          totalEstimatedTime: openedMRs.reduce((total, mr) => (
-            mr.timeEstimate ? total + (mr.timeEstimate / 60) : total
-          ), 0),
+          totalOpenedEstimatedTime: totalEstimated(openedMRs),
+          totalMergedEstimatedTime: totalEstimated(mergedMRs),
           mergedMRs
         })
     ).catch(errorHandler(req, res))

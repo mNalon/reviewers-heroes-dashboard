@@ -7,6 +7,7 @@ const parser = ({
   updated_at: updatedAt,
   author,
   assignee,
+  merged_by: mergedBy,
   work_in_progress: workInProgress,
   web_url: webUrl,
   time_stats: {
@@ -23,7 +24,8 @@ const parser = ({
   workInProgress,
   webUrl,
   timeEstimate,
-  mergedAt
+  mergedAt,
+  mergedBy: mergedBy && parseUser(mergedBy)
 })
 
 export { parser }

@@ -15,7 +15,7 @@ const getAllOpennedAssignedMRByUserId = ({ clients }) => (userId) => (
 )
 
 const getMergedAssignedMRsOnTheLastWeekByUserId = ({ clients }) => (userId) => (
-  clients.gitlabApi(`/merge_requests?scope=all&state=opened&assignee_id=${userId}`)
+  clients.gitlabApi(`/merge_requests?scope=all&state=merged&assignee_id=${userId}`)
     .then((body) => body.json())
     .then((mrs) => mrs.map(parseMR))
     .then((mrs) => {

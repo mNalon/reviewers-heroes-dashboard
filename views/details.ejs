@@ -2,7 +2,7 @@
 <html>
   <%- include('head'); %>
   <body>
-    <h1>Detalhes dos MRs</h1>
+    <h2>Detalhes dos MRs abertos</h2>
     <table class="table table-bordered table-active">
       <thead>
         <tr>
@@ -27,7 +27,38 @@
         <% }); %>
         <tr>
           <th colspan="5"></th>
-          <td><b>Total: <%=totalEstimatedTime%></b></td>
+          <td><b>Total: <%=totalOpenedEstimatedTime%></b></td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <h2>Detalhes dos MRs fechados na última semana</h2>
+    <table class="table table-bordered table-active">
+      <thead>
+        <tr>
+          <th scope="col">Título</th>
+          <th scope="col">Data de criação</th>
+          <th scope="col">Autor</th>
+          <th scope="col">Mergeado por</th>
+          <th scope="col">Link</th>
+          <th scope="col">Tempo estimado (min)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% mergedMRs.forEach(function(mr){ %>
+          <tr>
+            <th scope="row"><%= mr.title %></th>
+            <td><%= mr.createdAt %></td>
+            <td><%= mr.author.userName %></td>
+            <td><%= mr.mergedBy.userName %></td>
+            <td><a href="<%=mr.webUrl%>"><%=mr.webUrl%></a></td>
+            <td><%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %></td>
+          </tr>
+        <% }); %>
+        <tr>
+          <th colspan="5"></th>
+          <td><b>Total: <%=totalMergedEstimatedTime%></b></td>
         </tr>
       </tbody>
     </table>
