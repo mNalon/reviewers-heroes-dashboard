@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { DANGER_LIMIT_ASSIGNEES } from '../config'
+import { DANGER_LIMIT_ASSIGNEES, GROUP_ID } from '../config'
 
 const router = express.Router()
 
@@ -13,7 +13,7 @@ const totalEstimated = (mrs) => mrs.reduce((total, mr) => (
 
 /* GET home page. */
 router.get('/', (req, res) => {
-  req.repositories.user.getAllUsersByGroupId(919)
+  req.repositories.user.getAllUsersByGroupId(GROUP_ID)
     .then((users) => (
       Promise.all(users.map(async (user) => {
         const { getTotalOpenedAssigneesByUserId } = req.repositories.mergeRequest
