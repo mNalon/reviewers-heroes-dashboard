@@ -14,6 +14,12 @@ const getAllOpennedAssignedMRByUserId = ({ clients }) => (userId) => (
     .then((mrs) => mrs.map(parseMR))
 )
 
+const getTotalOpennedReviewesByUserId = ({ clients }) => (userId) => (
+  clients.gitlabApi(`/merge_requests?scope=all&state=opened&reviewer_id=${userId}`)
+    .then((body) => body.json())
+    .then((mrs) => mrs.length)
+)
+
 const getMergedAssignedMRsOnTheLastWeekByUserId = ({ clients }) => (userId) => (
   clients.gitlabApi(`/merge_requests?scope=all&state=merged&assignee_id=${userId}`)
     .then((body) => body.json())
@@ -29,5 +35,6 @@ const getMergedAssignedMRsOnTheLastWeekByUserId = ({ clients }) => (userId) => (
 export const createMRRepository = ({ clients }) => ({
   getAllOpennedAssignedMRByUserId: getAllOpennedAssignedMRByUserId({ clients }),
   getTotalOpenedAssigneesByUserId: getTotalOpennedAssigneesByUserId({ clients }),
-  getMergedAssignedMRsOnTheLastWeekByUserId: getMergedAssignedMRsOnTheLastWeekByUserId({ clients })
+  getMergedAssignedMRsOnTheLastWeekByUserId: getMergedAssignedMRsOnTheLastWeekByUserId({ clients }),
+  getTotalOpennedReviewesByUserId: getTotalOpennedReviewesByUserId({ clients })
 })
