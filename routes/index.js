@@ -11,7 +11,7 @@ const totalEstimated = (mrs) => mrs.reduce((total, mr) => (
   mr.timeEstimate ? total + (mr.timeEstimate / 60) : total
 ), 0)
 
-const sortDecreasingReviewers = (a, b) => b.totalReviewes - a.totalReviewes
+const sortDecreasingReviewers = (a, b) => b.totalReviews - a.totalReviews
 
 /* GET home page. */
 router.get('/', (req, res) => {
@@ -24,11 +24,11 @@ router.get('/', (req, res) => {
         } = req.repositories.mergeRequest
 
         const totalAssignees = await getTotalOpenedAssigneesByUserId(user.id)
-        const totalReviewes = await getTotalOpennedReviewesByUserId(user.id)
+        const totalReviews = await getTotalOpennedReviewesByUserId(user.id)
         return {
           ...user,
           totalAssignees,
-          totalReviewes
+          totalReviews
         }
       }))
     ))
