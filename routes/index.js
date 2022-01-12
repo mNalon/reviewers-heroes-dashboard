@@ -20,11 +20,11 @@ router.get('/', (req, res) => {
       Promise.all(users.map(async (user) => {
         const {
           getTotalOpenedAssigneesByUserId,
-          getTotalOpennedReviewesByUserId
+          getAllOpennedReviewMRByUserId
         } = req.repositories.mergeRequest
 
         const totalAssignees = await getTotalOpenedAssigneesByUserId(user.id)
-        const totalReviews = await getTotalOpennedReviewesByUserId(user.id)
+        const totalReviews = await getAllOpennedReviewMRByUserId(user.id)
         return {
           ...user,
           totalAssignees,
