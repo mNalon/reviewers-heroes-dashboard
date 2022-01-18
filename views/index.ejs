@@ -9,15 +9,17 @@
           <th scope="col"></th>
           <th scope="col">Usuário</th>
           <th scope="col">Total de assignees</th>
+          <th scope="col">Total de reviews</th>
           <th scope="col">Informações detalhadas</th>
         </tr>
       </thead>
       <tbody>
         <% users.forEach(function(user){ %>
-          <tr class="<%if (user.totalAssignees >= dangerLimitAssignees ) { %>table-danger<% } %>">
+          <tr class="<%if (user.totalReviews >= dangerLimitReviews ) { %>table-danger<% } %>">
             <th scope="row"><img src="<%=user.avatarUrl%>"></th>
             <td><%= user.userName %></td>
             <td><%= user.totalAssignees %></td>
+            <td><%= user.totalReviews %></td>
             <td><a href="/details/<%=user.id%>">?</a></td>
           </tr>
         <% }); %>

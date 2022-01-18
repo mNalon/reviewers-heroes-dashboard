@@ -11,21 +11,33 @@ const totalEstimated = (mrs) => mrs.reduce((total, mr) => (
   mr.timeEstimate ? total + (mr.timeEstimate / 60) : total
 ), 0)
 
+const sortDecreasingReviewers = (a, b) => b.totalReviews - a.totalReviews
+
 /* GET home page. */
 router.get('/', (req, res) => {
   req.repositories.user.getAllUsersByGroupId(GROUP_ID)
     .then((users) => (
       Promise.all(users.map(async (user) => {
-        const { getTotalOpenedAssigneesByUserId } = req.repositories.mergeRequest
-        const totalAssignees = await getTotalOpenedAssigneesByUserId(user.id)
+        const {
+          getTotalOpenedAssigneesByUserId,
+          getAllOpennedReviewMRByUserId
+        } = req.repositories.mergeRequest
+
+        const [totalAssignees, totalReviews] = await Promise.all([
+          getTotalOpenedAssigneesByUserId(user.id),
+          getAllOpennedReviewMRByUserId(user.id)
+        ])
+
         return {
           ...user,
-          totalAssignees
+          totalAssignees,
+          totalReviews
         }
       }))
     ))
+    .then((user) => user.sort(sortDecreasingReviewers))
     .then((users) => res.render('index', {
-      users, dangerLimitAssignees: DANGER_LIMIT_ASSIGNEES
+      users, dangerLimitReviews: DANGER_LIMIT_ASSIGNEES
     }))
     .catch(errorHandler(req, res))
 })
