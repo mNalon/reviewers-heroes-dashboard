@@ -2,7 +2,7 @@
 <html>
   <%- include('head'); %>
   <body>
-    <h1>REVIEW HEROES</h1>
+    <h1>REVIEWERS HEROES</h1>
     <table class="table table-bordered table-active table-hover">
       <thead>
         <tr>
@@ -15,7 +15,7 @@
       </thead>
       <tbody>
         <% users.forEach(function(user){ %>
-          <tr class="<%if (user.totalReviews >= dangerLimitAssignees ) { %>table-danger<% } %>">
+          <tr class="<%if (user.totalReviews >= dangerLimitReviews ) { %>table-danger<% } %>">
             <th scope="row"><img src="<%=user.avatarUrl%>"></th>
             <td><%= user.userName %></td>
             <td><%= user.totalAssignees %></td>

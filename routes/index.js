@@ -23,8 +23,11 @@ router.get('/', (req, res) => {
           getAllOpennedReviewMRByUserId
         } = req.repositories.mergeRequest
 
-        const totalAssignees = await getTotalOpenedAssigneesByUserId(user.id)
-        const totalReviews = await getAllOpennedReviewMRByUserId(user.id)
+        const [totalAssignees, totalReviews] = await Promise.all([
+          getTotalOpenedAssigneesByUserId(user.id),
+          getAllOpennedReviewMRByUserId(user.id)
+        ])
+
         return {
           ...user,
           totalAssignees,
@@ -34,7 +37,7 @@ router.get('/', (req, res) => {
     ))
     .then((user) => user.sort(sortDecreasingReviewers))
     .then((users) => res.render('index', {
-      users, dangerLimitAssignees: DANGER_LIMIT_ASSIGNEES
+      users, dangerLimitReviews: DANGER_LIMIT_ASSIGNEES
     }))
     .catch(errorHandler(req, res))
 })
