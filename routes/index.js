@@ -20,12 +20,12 @@ router.get('/', (req, res) => {
       Promise.all(users.map(async (user) => {
         const {
           getTotalOpenedAssigneesByUserId,
-          getAllOpennedReviewMRByUserId
+          getTotalOpennedReviewMRByUserId
         } = req.repositories.mergeRequest
 
         const [totalAssignees, totalReviews] = await Promise.all([
           getTotalOpenedAssigneesByUserId(user.id),
-          getAllOpennedReviewMRByUserId(user.id)
+          getTotalOpennedReviewMRByUserId(user.id)
         ])
 
         return {
@@ -46,18 +46,22 @@ router.get('/details/:id', (req, res) => {
   const userId = req.params.id
 
   const mergeRequestsInfo = [
+    req.repositories.mergeRequest.getAllOpennedReviewMRByUserId(userId),
     req.repositories.mergeRequest.getAllOpennedAssignedMRByUserId(userId),
-    req.repositories.mergeRequest.getMergedAssignedMRsOnTheLastWeekByUserId(userId)
+    req.repositories.mergeRequest.getMergedReviewMRsOnTheLastWeekByUserId(userId)
   ]
 
   Promise.all(mergeRequestsInfo)
     .then(
       ([
+        openedReviewMRs,
         openedMRs,
         mergedMRs
       ]) =>
         res.render('details', {
+          openedReviewMRs,
           openedMRs,
+          totalOpenedReviewEstimatedTime: totalEstimated(openedReviewMRs),
           totalOpenedEstimatedTime: totalEstimated(openedMRs),
           totalMergedEstimatedTime: totalEstimated(mergedMRs),
           mergedMRs

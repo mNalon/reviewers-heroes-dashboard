@@ -2,7 +2,7 @@
 <html>
   <%- include('head'); %>
   <body>
-    <h2>Detalhes dos MRs abertos</h2>
+    <h2>Detalhes dos MRs atribuidos como revisor</h2>
     <table class="table table-bordered table-active">
       <thead>
         <tr>
@@ -15,12 +15,43 @@
         </tr>
       </thead>
       <tbody>
+        <% openedReviewMRs.forEach(function(mr){ %>
+          <tr>
+            <th scope="row"><%= mr.title %></th>
+            <td><%= mr.createdAt %></td>
+            <td><%= mr.updatedAt %></td>
+            <td><%= mr.author && mr.author.userName %></td>
+            <td><a href="<%=mr.webUrl%>"><%=mr.webUrl%></a></td>
+            <td><%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %></td>
+          </tr>
+        <% }); %>
+        <tr>
+          <th colspan="5"></th>
+          <td><b>Total: <%=totalOpenedReviewEstimatedTime%></b></td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <h2>Detalhes dos MRs abertos (assignee)</h2>
+    <table class="table table-bordered table-active">
+      <thead>
+        <tr>
+          <th scope="col">Título</th>
+          <th scope="col">Data de criação</th>
+          <th scope="col">Data de atualização</th>
+          <th scope="col">Revisor</th>
+          <th scope="col">Link</th>
+          <th scope="col">Tempo estimado (min)</th>
+        </tr>
+      </thead>
+      <tbody>
         <% openedMRs.forEach(function(mr){ %>
           <tr>
             <th scope="row"><%= mr.title %></th>
             <td><%= mr.createdAt %></td>
             <td><%= mr.updatedAt %></td>
-            <td><%= mr.author.userName %></td>
+            <td><%= mr.revisor && mr.revisor.userName %></td>
             <td><a href="<%=mr.webUrl%>"><%=mr.webUrl%></a></td>
             <td><%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %></td>
           </tr>
@@ -33,7 +64,7 @@
     </table>
 
 
-    <h2>Detalhes dos MRs fechados na última semana</h2>
+    <h2>Detalhes dos MRs revisados e fechados na última semana</h2>
     <table class="table table-bordered table-active">
       <thead>
         <tr>
@@ -50,7 +81,7 @@
           <tr>
             <th scope="row"><%= mr.title %></th>
             <td><%= mr.createdAt %></td>
-            <td><%= mr.author.userName %></td>
+            <td><%= mr.author && mr.author.userName %></td>
             <td><%= mr.mergedBy.userName %></td>
             <td><a href="<%=mr.webUrl%>"><%=mr.webUrl%></a></td>
             <td><%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %></td>
