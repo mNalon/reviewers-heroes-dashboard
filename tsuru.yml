@@ -1,0 +1,4 @@
+healthcheck:
+  path: /healthcheck
+  allowed_failures: 5
+  use_in_router: true
