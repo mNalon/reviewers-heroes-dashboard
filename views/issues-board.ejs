@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issues Over Time</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      overflow: auto; /* Habilita a rolagem se o conteúdo for maior que a tela */
+    }
+    #chart-container {
+      width: 1280px; /* Largura fixa */
+      height: 720px; /* Altura fixa */
+      margin: auto;
+      display: block;
+      overflow: auto;
+    }
+    canvas {
+      width: 100% !important;  /* Para garantir que o gráfico ocupe toda a largura do container */
+      height: 100% !important; /* Para garantir que o gráfico ocupe toda a altura do container */
+    }
+  </style>
+</head>
+<body>
+  <h1>Issues Over Time</h1>
+  <h2>labels: <%= labels %></h2>
+  <div id="chart-container">
+    <canvas id="issuesChart"></canvas>
+  </div>
+
+  <script>
+        const data =  <%- JSON.stringify(issuesCountByWeek) %>
+
+        console.log(data)
+
+        const { notClosedIssuesByWeek, openedIssuesByWeek, closedIssuesByWeek } = data
+
+        // Prepara os dados para o gráfico
+        const labels = notClosedIssuesByWeek.map((entry) => entry.week);
+
+        const notClosedIssuesByWeekCounts = notClosedIssuesByWeek.map((entry) => entry.count);
+        const openedIssuesByWeekCounts = openedIssuesByWeek.map((entry) => entry.count);
+        const closedIssuesByWeekCounts = closedIssuesByWeek.map((entry) => entry.count);
+
+        // Configura o gráfico
+        const ctx = document.getElementById('issuesChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Open Issues',
+              data: notClosedIssuesByWeekCounts,
+              borderColor: 'rgba(205, 202, 25, 1)',
+              backgroundColor: 'rgba(255, 255, 255, 0)',
+              borderWidth: 2,
+              fill: true,
+            }, {
+              label: 'Opened Issues By Week',
+              data: openedIssuesByWeekCounts,
+              borderColor: 'rgba(192, 0, 57, 1)',
+              backgroundColor: 'rgba(255, 255, 255, 0)',
+              borderWidth: 2,
+              fill: true,
+            }, {
+              label: 'Closed Issues By Week',
+              data: closedIssuesByWeekCounts,
+              borderColor: 'rgba(64, 155, 15, 1)',
+              backgroundColor: 'rgba(255, 255, 255, 0)',
+              borderWidth: 2,
+              fill: true,
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false, // Permite que o gráfico tenha o tamanho fixo especificado
+            scales: {
+              x: {
+                type: 'category',
+                title: {
+                  display: true,
+                  text: 'Week',
+                },
+                ticks: {
+                  autoSkip: true,
+                  maxTicksLimit: 20, // Limita o número de ticks no eixo X para evitar sobrecarga
+                },
+                reverse: false,
+              },
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Issues Count',
+                },
+              },
+            },
+          },
+        });
+  </script>
+</body>
+</html>
