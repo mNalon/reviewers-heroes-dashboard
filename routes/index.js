@@ -13,6 +13,99 @@ const totalEstimated = (mrs) => mrs.reduce((total, mr) => (
 
 const sortDecreasingReviewers = (a, b) => b.totalReviews - a.totalReviews
 
+function formatDate(date) {
+  return date.toISOString().split('T')[0]
+}
+
+function getLastNthMonthsWeeks(numberOfMonths = 1) {
+  const now = new Date()
+  now.setHours(0, 0, 0, 0) // Set hours to 0 to avoid discrepancy
+
+  // Go back N months
+  const startDate = new Date(now)
+  startDate.setMonth(startDate.getMonth() - numberOfMonths)
+  startDate.setDate(1) // Ensures start from the beginning of the month
+
+  const weeks = []
+  const current = new Date(startDate)
+
+  while (current <= now) {
+    const weekStart = new Date(current)
+    weekStart.setDate(current.getDate() - current.getDay()) // Adjust for the sunday of the week
+    weekStart.setHours(0, 0, 0, 0)
+
+    const weekEnd = new Date(weekStart)
+    weekEnd.setDate(weekStart.getDate() + 6) // Add 6 days to get on saturday
+    weekEnd.setHours(23, 59, 59, 999)
+
+    weeks.push({
+      beginAt: weekStart,
+      endAt: weekEnd,
+      week: `${formatDate(weekStart)} to ${formatDate(weekEnd)}`
+    })
+
+    // Go forward one week
+    current.setDate(current.getDate() + 7)
+  }
+
+  return weeks
+}
+
+function getNumberOfNotClosedIssuesByWeek(issues, weeksInterval) {
+  return weeksInterval.map((week) => {
+    let count = 0
+
+    issues.forEach((issue) => {
+      const issueWasCreatedBeforeTheWeekFinishes =
+        issue.createdAt && (issue.createdAt <= week.endAt)
+      const issueIsNotClosedInTheWeek = !issue.closedAt || issue.closedAt > week.endAt
+
+      if (issueWasCreatedBeforeTheWeekFinishes && issueIsNotClosedInTheWeek) count += 1
+    })
+
+    return {
+      ...week,
+      count
+    }
+  })
+}
+
+function getNumberOfOpenedIssuesByWeek(issues, weeksInterval) {
+  return weeksInterval.map((week) => {
+    let count = 0
+
+    issues.forEach((issue) => {
+      const issueWasCreatedDuringTheWeek =
+        issue.createdAt >= week.beginAt && issue.createdAt <= week.endAt
+
+      if (issueWasCreatedDuringTheWeek) count += 1
+    })
+
+    return {
+      ...week,
+      count
+    }
+  })
+}
+
+function getNumberOfClosedIssuesByWeek(issues, weeksInterval) {
+  return weeksInterval.map((week) => {
+    let count = 0
+
+    issues.forEach((issue) => {
+      const issueWasClosedDuringTheWeek =
+        issue.closedAt >= week.beginAt && issue.closedAt <= week.endAt
+
+      if (issueWasClosedDuringTheWeek) count += 1
+    })
+
+    return {
+      ...week,
+      count
+    }
+  })
+}
+
 /* GET home page. */
 router.get('/', (req, res) => {
   req.repositories.user.getAllUsersByGroupId(GROUP_ID)
@@ -67,6 +160,29 @@ router.get('/details/:id', (req, res) => {
           mergedMRs
         })
     ).catch(errorHandler(req, res))
+})
+
+router.get('/issues/:groupId', async (req, res) => {
+  const { groupId } = req.params
+
+  const { labels: labelsQueryParam = '' } = req.query
+
+  const labels = labelsQueryParam.split(',')
+
+  const weeksInterval = getLastNthMonthsWeeks(4)
+
+  req.repositories.issue.getIssuesByGroupIdAndLabels(groupId, labels).then((issues) => {
+    const issuesCountByWeek = {
+      notClosedIssuesByWeek: getNumberOfNotClosedIssuesByWeek(issues, weeksInterval),
+      openedIssuesByWeek: getNumberOfOpenedIssuesByWeek(issues, weeksInterval),
+      closedIssuesByWeek: getNumberOfClosedIssuesByWeek(issues, weeksInterval)
+    }
+
+    res.render('issues-board', { issuesCountByWeek, labels: labelsQueryParam })
+  }).catch((err) => {
+    res.status(500)
+    res.json(err)
+  })
 })
 
 export { router }
