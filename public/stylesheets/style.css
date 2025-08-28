@@ -521,13 +521,13 @@ body {
 }
 
 /* Details Page Styles */
-.details-container {
+.details {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
 }
 
-.details-header {
+.details__header {
   display: flex;
   align-items: center;
   gap: 2rem;
@@ -536,9 +536,7 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.back-btn {
-  display: inline-flex;
-  align-items: center;
+.btn--back {
   padding: 0.75rem 1.5rem;
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
@@ -546,19 +544,21 @@ body {
   border-radius: 8px;
   font-weight: 500;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
   font-size: 0.9rem;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
-.back-btn:hover {
+.btn--back:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.3);
   color: #ffffff;
   text-decoration: none;
   transform: translateX(-2px);
+  box-shadow: none;
 }
 
-.details-title {
+.details__title {
   font-size: 2.5rem;
   font-weight: 700;
   color: #ffffff;
@@ -566,13 +566,13 @@ body {
   letter-spacing: -0.02em;
 }
 
-.details-main {
+.details__main {
   display: flex;
   flex-direction: column;
   gap: 3rem;
 }
 
-.details-section {
+.details__section {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
@@ -580,7 +580,7 @@ body {
   backdrop-filter: blur(10px);
 }
 
-.section-title {
+.details__section-title {
   font-size: 1.5rem;
   font-weight: 600;
   color: #ffffff;
@@ -589,20 +589,20 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.table-container {
+.details__table-container {
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
 
-.details-table {
+.details__table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
   table-layout: fixed;
 }
 
-.details-table th {
+.details__table th {
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
   font-weight: 600;
@@ -612,29 +612,29 @@ body {
   white-space: nowrap;
 }
 
-.details-table th.center {
+.details__table-header--center {
   text-align: center;
 }
 
-.details-table td {
+.details__table-cell {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.9);
   white-space: nowrap;
 }
 
-.details-table tr:hover {
+.details__table tr:hover {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.title-cell {
+.details__table-cell--title {
   max-width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.date-cell {
+.details__table-cell--date {
   min-width: 100px;
   text-align: left;
   white-space: nowrap;
@@ -642,22 +642,19 @@ body {
   color: rgba(255, 255, 255, 0.9);
 }
 
-.time-cell {
+.details__table-cell--time {
   text-align: left;
   white-space: nowrap;
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.9);
 }
 
-.link-cell {
+.details__table-cell--link {
   min-width: 90px;
-  text-align: center;
   white-space: nowrap;
 }
 
-.link-btn {
-  display: inline-flex;
-  align-items: center;
+.btn--link {
   padding: 0.4rem 0.8rem;
   background: #ffffff;
   color: #333333;
@@ -666,218 +663,209 @@ body {
   font-size: 0.8rem;
   font-weight: 500;
   border: 1px solid #ffffff;
-  transition: all 0.3s ease;
   white-space: nowrap;
   min-width: 70px;
   justify-content: center;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
-.link-btn:hover {
+.btn--link:hover {
   background: #f0f0f0;
   border-color: #e0e0e0;
   color: #333333;
   text-decoration: none;
   transform: translateY(-1px);
+  box-shadow: none;
 }
 
-.total-row {
+.details__table-row--total {
   background: rgba(255, 255, 255, 0.1) !important;
   font-weight: 600;
 }
 
-.total-mobile {
-  display: none;
+.details__table-cell--total-value {
+  text-align: left;
 }
 
-.total-desktop {
-  display: table-cell;
-}
-
-.total-row td {
+.details__table-row--total .details__table-cell {
   color: #ffffff !important;
   font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Responsive Design for Details */
 @media (max-width: 768px) {
-  .details-container {
+  .details {
     padding: 1rem;
   }
 
-  .details-header {
+  .details__header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
 
-  .details-title {
+  .details__title {
     font-size: 1.8rem;
   }
 
-  .details-main {
+  .details__main {
     gap: 1.5rem;
   }
 
-  .details-section {
+  .details__section {
     padding: 1rem;
   }
 
-  .section-title {
+  .details__section-title {
     font-size: 1.3rem;
     margin-bottom: 1rem;
   }
 
-  .details-table {
+  .details__table {
     font-size: 0.75rem;
   }
 
-  .details-table th,
-  .details-table td {
+  .details__table th,
+  .details__table-cell {
     padding: 0.4rem 0.2rem;
   }
 
-  .title-cell {
+  .details__table-cell--title {
     max-width: 150px;
     font-size: 0.7rem;
   }
 
-  .date-cell {
+  .details__table-cell--date {
     min-width: 70px;
     font-size: 0.65rem;
   }
 
-  .time-cell {
+  .details__table-cell--time {
     font-size: 0.65rem;
     min-width: 60px;
   }
 
-  .link-cell {
+  .details__table-cell--link {
     min-width: 60px;
   }
 
-  .link-btn {
+  .btn--link {
     padding: 0.3rem 0.5rem;
     font-size: 0.65rem;
     min-width: 50px;
   }
 
-  .table-container {
+  .details__table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 }
 
 @media (max-width: 480px) {
-  .details-header {
+  .details__header {
     gap: 0.5rem;
   }
 
-  .details-title {
+  .details__title {
     font-size: 1.4rem;
   }
 
-  .details-section {
+  .details__section {
     padding: 0.8rem;
   }
 
-  .section-title {
+  .details__section-title {
     font-size: 1.1rem;
     margin-bottom: 0.8rem;
   }
 
-  .details-table {
+  .details__table {
     font-size: 0.65rem;
   }
 
-  .details-table th,
-  .details-table td {
+  .details__table th,
+  .details__table-cell {
     padding: 0.3rem 0.1rem;
   }
 
-  .title-cell {
+  .details__table-cell--title {
     max-width: 120px;
     font-size: 0.6rem;
   }
 
-  .date-cell {
+  .details__table-cell--date {
     min-width: 60px;
     font-size: 0.6rem;
   }
 
-  .time-cell {
+  .details__table-cell--time {
     font-size: 0.6rem;
     min-width: 50px;
   }
 
-  .link-cell {
+  .details__table-cell--link {
     min-width: 50px;
   }
 
-  .link-btn {
+  .btn--link {
     padding: 0.25rem 0.4rem;
     font-size: 0.6rem;
     min-width: 40px;
   }
 
   /* Ocultar algumas colunas em telas muito pequenas */
-  .details-table th:nth-child(3),
-  .details-table td:nth-child(3) {
+  .details__table th:nth-child(3),
+  .details__table-cell:nth-child(3) {
     display: none;
-  }
-
-  .total-desktop {
-    display: none;
-  }
-
-  .total-mobile {
-    display: table-cell;
   }
 }
 
 /* Para telas muito pequenas */
 @media (max-width: 320px) {
-  .details-container {
+  .details {
     padding: 0.5rem;
   }
 
-  .details-title {
+  .details__title {
     font-size: 1.2rem;
   }
 
-  .details-section {
+  .details__section {
     padding: 0.5rem;
   }
 
-  .section-title {
+  .details__section-title {
     font-size: 1rem;
     margin-bottom: 0.5rem;
   }
 
-  .details-table {
+  .details__table {
     font-size: 0.6rem;
   }
 
-  .details-table th,
-  .details-table td {
+  .details__table th,
+  .details__table-cell {
     padding: 0.2rem 0.05rem;
   }
 
-  .title-cell {
+  .details__table-cell--title {
     max-width: 100px;
     font-size: 0.55rem;
   }
 
-  .date-cell {
+  .details__table-cell--date {
     min-width: 50px;
     font-size: 0.55rem;
   }
 
-  .time-cell {
+  .details__table-cell--time {
     font-size: 0.55rem;
     min-width: 45px;
   }
 
-  .link-btn {
+  .btn--link {
     padding: 0.2rem 0.3rem;
     font-size: 0.55rem;
     min-width: 35px;

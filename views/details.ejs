@@ -3,34 +3,34 @@
 <%- include('head'); %>
 
   <body>
-    <div class="details-container">
-      <header class="details-header">
-        <a href="/" class="back-btn">←</a>
-        <h1 class="details-title">Detalhes do Revisor</h1>
+    <div class="details">
+      <header class="details__header">
+        <a href="/" class="btn btn--back">←</a>
+        <h1 class="details__title">Detalhes do Revisor</h1>
       </header>
 
-      <main class="details-main">
-        <section class="details-section">
-          <h2 class="section-title">MRs atribuídos como revisor</h2>
-          <div class="table-container">
-            <table class="details-table">
+      <main class="details__main">
+        <section class="details__section">
+          <h2 class="details__section-title">MRs atribuídos como revisor</h2>
+          <div class="details__table-container">
+            <table class="details__table">
               <thead>
                 <tr>
                   <th>Título</th>
                   <th>Data de criação</th>
                   <th>Data de atualização</th>
                   <th>Autor</th>
-                  <th class="center">Link</th>
+                  <th class="details__table-header--center">Link</th>
                   <th>Tempo estimado (min)</th>
                 </tr>
               </thead>
               <tbody>
                 <% openedReviewMRs.forEach(function(mr){ %>
                   <tr>
-                    <td class="title-cell" title="<%= mr.title %>">
+                    <td class="details__table-cell details__table-cell--title" title="<%= mr.title %>">
                       <%= mr.title %>
                     </td>
-                    <td class="date-cell">
+                    <td class="details__table-cell details__table-cell--date">
                       <% if (mr.createdAt) { %>
                         <%= new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' , month: '2-digit' ,
                           year: 'numeric' }) %>
@@ -38,7 +38,7 @@
                             -
                             <% } %>
                     </td>
-                    <td class="date-cell">
+                    <td class="details__table-cell details__table-cell--date">
                       <% if (mr.updatedAt) { %>
                         <%= new Date(mr.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit' , month: '2-digit' ,
                           year: 'numeric' }) %>
@@ -46,50 +46,55 @@
                             -
                             <% } %>
                     </td>
-                    <td>
+                    <td class="details__table-cell">
                       <%= mr.author && mr.author.userName %>
                     </td>
-                    <td class="link-cell">
-                      <a href="<%=mr.webUrl%>" class="link-btn" target="_blank">Ver MR</a>
+                    <td class="details__table-cell details__table-cell--link">
+                      <a href="<%=mr.webUrl%>" class="btn btn--link" target="_blank">Ver MR</a>
                     </td>
-                    <td class="time-cell">
+                    <td class="details__table-cell details__table-cell--time">
                       <%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %>
                     </td>
                   </tr>
                   <% }); %>
-                    <tr class="total-row">
-                      <td colspan="4" class="total-mobile"><strong>Total:</strong></td>
-                      <td colspan="5" class="total-desktop"><strong>Total:</strong></td>
-                      <td><strong>
+                    <tr class="details__table-row--total">
+                      <td class="details__table-cell"><strong>Total:</strong></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell details__table-cell--total-value">
+                        <strong>
                           <%=totalOpenedReviewEstimatedTime%>
-                        </strong></td>
+                        </strong>
+                      </td>
                     </tr>
               </tbody>
             </table>
           </div>
         </section>
 
-        <section class="details-section">
-          <h2 class="section-title">MRs abertos (assignee)</h2>
-          <div class="table-container">
-            <table class="details-table">
+        <section class="details__section">
+          <h2 class="details__section-title">MRs abertos (assignee)</h2>
+          <div class="details__table-container">
+            <table class="details__table">
               <thead>
                 <tr>
                   <th>Título</th>
                   <th>Data de criação</th>
                   <th>Data de atualização</th>
                   <th>Revisor</th>
-                  <th class="center">Link</th>
+                  <th class="details__table-header--center">Link</th>
                   <th>Tempo estimado (min)</th>
                 </tr>
               </thead>
               <tbody>
                 <% openedMRs.forEach(function(mr){ %>
                   <tr>
-                    <td class="title-cell" title="<%= mr.title %>">
+                    <td class="details__table-cell details__table-cell--title" title="<%= mr.title %>">
                       <%= mr.title %>
                     </td>
-                    <td class="date-cell">
+                    <td class="details__table-cell details__table-cell--date">
                       <% if (mr.createdAt) { %>
                         <%= new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' , month: '2-digit' ,
                           year: 'numeric' }) %>
@@ -97,7 +102,7 @@
                             -
                             <% } %>
                     </td>
-                    <td class="date-cell">
+                    <td class="details__table-cell details__table-cell--date">
                       <% if (mr.updatedAt) { %>
                         <%= new Date(mr.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit' , month: '2-digit' ,
                           year: 'numeric' }) %>
@@ -105,50 +110,55 @@
                             -
                             <% } %>
                     </td>
-                    <td>
+                    <td class="details__table-cell">
                       <%= mr.revisor && mr.revisor.userName %>
                     </td>
-                    <td class="link-cell">
-                      <a href="<%=mr.webUrl%>" class="link-btn" target="_blank">Ver MR</a>
+                    <td class="details__table-cell details__table-cell--link">
+                      <a href="<%=mr.webUrl%>" class="btn btn--link" target="_blank">Ver MR</a>
                     </td>
-                    <td class="time-cell">
+                    <td class="details__table-cell details__table-cell--time">
                       <%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %>
                     </td>
                   </tr>
                   <% }); %>
-                    <tr class="total-row">
-                      <td colspan="4" class="total-mobile"><strong>Total:</strong></td>
-                      <td colspan="5" class="total-desktop"><strong>Total:</strong></td>
-                      <td><strong>
+                    <tr class="details__table-row--total">
+                      <td class="details__table-cell"><strong>Total:</strong></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell details__table-cell--total-value">
+                        <strong>
                           <%=totalOpenedEstimatedTime%>
-                        </strong></td>
+                        </strong>
+                      </td>
                     </tr>
               </tbody>
             </table>
           </div>
         </section>
 
-        <section class="details-section">
-          <h2 class="section-title">MRs revisados e fechados na última semana</h2>
-          <div class="table-container">
-            <table class="details-table">
+        <section class="details__section">
+          <h2 class="details__section-title">MRs revisados e fechados na última semana</h2>
+          <div class="details__table-container">
+            <table class="details__table">
               <thead>
                 <tr>
                   <th>Título</th>
                   <th>Data de criação</th>
                   <th>Autor</th>
                   <th>Mergeado por</th>
-                  <th class="center">Link</th>
+                  <th class="details__table-header--center">Link</th>
                   <th>Tempo estimado (min)</th>
                 </tr>
               </thead>
               <tbody>
                 <% mergedMRs.forEach(function(mr){ %>
                   <tr>
-                    <td class="title-cell" title="<%= mr.title %>">
+                    <td class="details__table-cell details__table-cell--title" title="<%= mr.title %>">
                       <%= mr.title %>
                     </td>
-                    <td class="date-cell">
+                    <td class="details__table-cell details__table-cell--date">
                       <% if (mr.createdAt) { %>
                         <%= new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' , month: '2-digit' ,
                           year: 'numeric' }) %>
@@ -156,26 +166,31 @@
                             -
                             <% } %>
                     </td>
-                    <td>
+                    <td class="details__table-cell">
                       <%= mr.author && mr.author.userName %>
                     </td>
-                    <td>
+                    <td class="details__table-cell">
                       <%= mr.mergedBy.userName %>
                     </td>
-                    <td class="link-cell">
-                      <a href="<%=mr.webUrl%>" class="link-btn" target="_blank">Ver MR</a>
+                    <td class="details__table-cell details__table-cell--link">
+                      <a href="<%=mr.webUrl%>" class="btn btn--link" target="_blank">Ver MR</a>
                     </td>
-                    <td class="time-cell">
+                    <td class="details__table-cell details__table-cell--time">
                       <%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %>
                     </td>
                   </tr>
                   <% }); %>
-                    <tr class="total-row">
-                      <td colspan="4" class="total-mobile"><strong>Total:</strong></td>
-                      <td colspan="5" class="total-desktop"><strong>Total:</strong></td>
-                      <td><strong>
+                    <tr class="details__table-row--total">
+                      <td class="details__table-cell"><strong>Total:</strong></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell"></td>
+                      <td class="details__table-cell details__table-cell--total-value">
+                        <strong>
                           <%=totalMergedEstimatedTime%>
-                        </strong></td>
+                        </strong>
+                      </td>
                     </tr>
               </tbody>
             </table>
