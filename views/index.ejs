@@ -1,29 +1,144 @@
 <!DOCTYPE html>
 <html>
-  <%- include('head'); %>
+<%- include('head'); %>
+
   <body>
-    <h1>REVIEWERS HEROES</h1>
-    <table class="table table-bordered table-active table-hover">
-      <thead>
-        <tr>
-          <th scope="col"></th>
-          <th scope="col">Usuário</th>
-          <th scope="col">Total de assignees</th>
-          <th scope="col">Total de reviews</th>
-          <th scope="col">Informações detalhadas</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% users.forEach(function(user){ %>
-          <tr class="<%if (user.totalReviews >= dangerLimitReviews ) { %>table-danger<% } %>">
-            <th scope="row"><img src="<%=user.avatarUrl%>"></th>
-            <td><%= user.userName %></td>
-            <td><%= user.totalAssignees %></td>
-            <td><%= user.totalReviews %></td>
-            <td><a href="/details/<%=user.id%>">?</a></td>
-          </tr>
-        <% }); %>
-      </tbody>
-    </table>
+    <div class="hero-container">
+      <header class="hero-header">
+        <h1 class="hero-title">Reviewers Heroes</h1>
+        <div class="view-controls">
+          <button class="view-btn active" data-view="grid" title="Visualização em Grid">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
+            </svg>
+          </button>
+          <button class="view-btn" data-view="list" title="Visualização em Lista">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="hero-main">
+        <div class="reviewers-grid">
+          <% users.forEach(function(user, index){ %>
+            <div class="reviewer-card <%= user.totalReviews >= dangerLimitReviews ? 'danger' : '' %>">
+              <div class="reviewer-info">
+                <div class="reviewer-avatar">
+                  <img src="<%=user.avatarUrl%>" alt="<%=user.userName%>">
+                </div>
+                <div class="reviewer-details">
+                  <h2 class="reviewer-name">
+                    <%= user.userName %>
+                  </h2>
+                  <div class="reviewer-stats">
+                    <div class="stat-item">
+                      <span class="stat-icon">🏆</span>
+                      <span class="stat-value">
+                        <%= user.totalReviews %>
+                      </span>
+                      <span class="stat-label">reviews</span>
+                    </div>
+                    <div class="stat-item">
+                      <span class="stat-icon">👥</span>
+                      <span class="stat-value">
+                        <%= user.totalAssignees %>
+                      </span>
+                      <span class="stat-label">assignees</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="reviewer-actions">
+                <a href="/details/<%=user.id%>" class="details-btn">Detalhes</a>
+              </div>
+            </div>
+            <% }); %>
+        </div>
+
+        <!-- Visualização em Lista -->
+        <div class="reviewers-list" style="display: none;">
+          <table class="reviewers-table">
+            <thead>
+              <tr>
+                <th>Revisor</th>
+                <th>Reviews</th>
+                <th>Assignees</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% users.forEach(function(user, index){ %>
+                <tr class="reviewer-row <%= user.totalReviews >= dangerLimitReviews ? 'danger' : '' %>">
+                  <td class="reviewer-info-cell">
+                    <div class="reviewer-avatar-small">
+                      <img src="<%=user.avatarUrl%>" alt="<%=user.userName%>">
+                    </div>
+                    <span class="reviewer-name-list">
+                      <%=user.userName%>
+                    </span>
+                  </td>
+                  <td class="stat-cell">
+                    <span class="stat-value-list">
+                      <%=user.totalReviews%>
+                    </span>
+                  </td>
+                  <td class="stat-cell">
+                    <span class="stat-value-list">
+                      <%=user.totalAssignees%>
+                    </span>
+                  </td>
+                  <td class="actions-cell">
+                    <a href="/details/<%=user.id%>" class="details-btn-small">Detalhes</a>
+                  </td>
+                </tr>
+                <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const viewButtons = document.querySelectorAll('.view-btn');
+        const gridView = document.querySelector('.reviewers-grid');
+        const listView = document.querySelector('.reviewers-list');
+
+        viewButtons.forEach(button => {
+          button.addEventListener('click', function () {
+            const view = this.dataset.view;
+
+            // Remover classe active de todos os botões
+            viewButtons.forEach(btn => btn.classList.remove('active'));
+
+            // Adicionar classe active ao botão clicado
+            this.classList.add('active');
+
+            // Alternar visualizações
+            if (view === 'grid') {
+              gridView.style.display = 'grid';
+              listView.style.display = 'none';
+            } else {
+              gridView.style.display = 'none';
+              listView.style.display = 'block';
+            }
+
+            // Salvar preferência no localStorage
+            localStorage.setItem('viewMode', view);
+          });
+        });
+
+        // Carregar preferência salva
+        const savedView = localStorage.getItem('viewMode') || 'grid';
+        const targetButton = document.querySelector(`[data-view="${savedView}"]`);
+        if (targetButton) {
+          targetButton.click();
+        }
+      });
+    </script>
   </body>
+
 </html>
