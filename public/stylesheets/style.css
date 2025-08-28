@@ -13,14 +13,14 @@ body {
   line-height: 1.6;
 }
 
-.hero-container {
+.dashboard {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
 }
 
 /* Header Styles */
-.hero-header {
+.dashboard__header {
   text-align: center;
   margin-bottom: 3rem;
   position: relative;
@@ -31,7 +31,7 @@ body {
   gap: 2rem;
 }
 
-.hero-title {
+.dashboard__title {
   font-size: 3.5rem;
   font-weight: 700;
   color: white;
@@ -47,7 +47,7 @@ body {
   gap: 0.25rem;
 }
 
-.view-btn {
+.view-controls__btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,23 +61,23 @@ body {
   min-width: 40px;
 }
 
-.view-btn:hover {
+.view-controls__btn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.9);
 }
 
-.view-btn.active {
+.view-controls__btn--active {
   background: #ffffff;
   color: #333333;
 }
 
-.view-btn svg {
+.view-controls__btn svg {
   width: 16px;
   height: 16px;
 }
 
 /* Main Content */
-.hero-main {
+.dashboard__main {
   width: 100%;
 }
 
@@ -111,7 +111,7 @@ body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-.reviewer-card.danger {
+.reviewer-card--danger {
   border-color: #ff6b6b;
   background: rgba(255, 107, 107, 0.1);
 }
@@ -133,7 +133,7 @@ body {
 }
 
 /* Reviewer Info */
-.reviewer-info {
+.reviewer-card__info {
   display: flex;
   align-items: center;
   gap: 1.5rem;
@@ -144,12 +144,12 @@ body {
   /* Previne overflow */
 }
 
-.reviewer-avatar {
+.reviewer-card__avatar {
   position: relative;
   flex-shrink: 0;
 }
 
-.reviewer-avatar img {
+.reviewer-card__avatar-img {
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -157,13 +157,13 @@ body {
   transition: all 0.3s ease;
 }
 
-.reviewer-card:hover .reviewer-avatar img {
+.reviewer-card:hover .reviewer-card__avatar-img {
   border-color: rgba(255, 255, 255, 0.4);
   transform: scale(1.05);
 }
 
 /* Reviewer Details */
-.reviewer-details {
+.reviewer-card__details {
   flex: 1;
   min-width: 0;
   /* Permite que o flex item encolha além do tamanho do conteúdo */
@@ -171,7 +171,7 @@ body {
   /* Previne overflow */
 }
 
-.reviewer-name {
+.reviewer-card__name {
   font-size: 1.5rem;
   font-weight: 600;
   color: #ffffff;
@@ -183,11 +183,15 @@ body {
   max-width: 100%;
 }
 
-.reviewer-stats {
+.reviewer-card__stats {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
   margin-top: 0.5rem;
+}
+
+.stat-item__icon {
+  font-size: 1rem;
 }
 
 .stat-item {
@@ -196,35 +200,30 @@ body {
   gap: 0.4rem;
 }
 
-.stat-icon {
-  font-size: 1rem;
-}
-
-.stat-value {
+.stat-item__value {
   font-size: 1.1rem;
   font-weight: 700;
   color: #ffffff;
   margin-right: 0.3rem;
 }
 
-.stat-label {
+.stat-item__label {
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.7);
 }
 
 /* Reviewer Actions */
-.reviewer-actions {
+.reviewer-card__actions {
   text-align: center;
   margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.details-btn {
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 2rem;
   background: #ffffff;
   color: #333333;
   text-decoration: none;
@@ -232,13 +231,23 @@ body {
   font-weight: 600;
   border: 1px solid #ffffff;
   transition: all 0.3s ease;
-  font-size: 0.9rem;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+}
+
+.btn--primary {
+  padding: 0.75rem 2rem;
+  font-size: 0.9rem;
   min-width: 120px;
 }
 
-.details-btn:hover {
+.btn--small {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  min-width: 80px;
+}
+
+.btn:hover {
   background: #f0f0f0;
   border-color: #e0e0e0;
   transform: translateY(-2px);
@@ -276,26 +285,39 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.reviewer-row {
+.reviewers-table__row {
   transition: background-color 0.3s ease;
 }
 
-.reviewer-row:hover {
+.reviewers-table__row:hover {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.reviewer-row.danger {
+.reviewers-table__row--danger {
   background: rgba(231, 76, 60, 0.1);
   border-left: 4px solid #e74c3c;
 }
 
-.reviewer-info-cell {
+.reviewers-table__cell {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.reviewers-table__cell--info {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-.reviewer-avatar-small {
+.reviewers-table__cell--stat {
+  text-align: left;
+}
+
+.reviewers-table__cell--actions {
+  text-align: left;
+}
+
+.reviewer-avatar--small {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -303,91 +325,58 @@ body {
   border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.reviewer-avatar-small img {
+.reviewer-avatar__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.reviewer-name-list {
+.reviewer-name--list {
   font-weight: 600;
   color: #ffffff;
   font-size: 1rem;
 }
 
-.stat-cell {
-  text-align: left;
-}
-
-.stat-value-list {
+.stat-value--list {
   font-size: 1.2rem;
   font-weight: 700;
   color: #ffffff;
 }
 
-.actions-cell {
-  text-align: left;
-}
-
-.details-btn-small {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  background: #ffffff;
-  color: #333333;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  border: 1px solid #ffffff;
-  transition: all 0.3s ease;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  min-width: 80px;
-}
-
-.details-btn-small:hover {
-  background: #f0f0f0;
-  border-color: #e0e0e0;
-  transform: translateY(-1px);
-  color: #333333;
-  text-decoration: none;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
-  .hero-container {
+  .dashboard {
     padding: 1rem;
   }
 
-  .hero-header {
+  .dashboard__header {
     flex-direction: column;
     gap: 1.5rem;
   }
 
-  .hero-title {
+  .dashboard__title {
     font-size: 2.5rem;
   }
 
   .reviewers-table th,
-  .reviewers-table td {
+  .reviewers-table__cell {
     padding: 0.75rem;
   }
 
-  .reviewer-info-cell {
+  .reviewers-table__cell--info {
     gap: 0.75rem;
   }
 
-  .reviewer-avatar-small {
+  .reviewer-avatar--small {
     width: 35px;
     height: 35px;
   }
 
-  .reviewer-name-list {
+  .reviewer-name--list {
     font-size: 0.9rem;
   }
 
-  .stat-value-list {
+  .stat-value--list {
     font-size: 1.1rem;
   }
 
@@ -400,32 +389,32 @@ body {
     padding: 1.5rem;
   }
 
-  .reviewer-info {
+  .reviewer-card__info {
     gap: 1rem;
   }
 
-  .reviewer-avatar img {
+  .reviewer-card__avatar-img {
     width: 60px;
     height: 60px;
   }
 
-  .reviewer-name {
+  .reviewer-card__name {
     font-size: 1.25rem;
     white-space: normal;
     /* Permite quebra de linha em mobile */
     line-height: 1.3;
   }
 
-  .reviewer-stats {
+  .reviewer-card__stats {
     gap: 0.6rem;
   }
 
-  .reviewer-actions {
+  .reviewer-card__actions {
     margin-top: 1rem;
     padding-top: 0.8rem;
   }
 
-  .details-btn {
+  .btn--primary {
     padding: 0.6rem 1.5rem;
     font-size: 0.85rem;
     min-width: 100px;
@@ -433,7 +422,7 @@ body {
 }
 
 @media (max-width: 480px) {
-  .hero-title {
+  .dashboard__title {
     font-size: 2rem;
   }
 
@@ -441,12 +430,12 @@ body {
     scale: 0.9;
   }
 
-  .reviewer-info {
+  .reviewer-card__info {
     flex-direction: column;
     text-align: center;
   }
 
-  .reviewer-name {
+  .reviewer-card__name {
     font-size: 1.1rem;
     word-break: break-word;
     /* Quebra palavras longas se necessário */
@@ -454,36 +443,36 @@ body {
     /* Adiciona hífens automáticos */
   }
 
-  .reviewer-stats {
+  .reviewer-card__stats {
     align-items: center;
   }
 
-  .details-btn {
+  .btn--primary {
     width: 100%;
     margin-top: 0.5rem;
   }
 
   /* Responsividade da tabela em mobile */
   .reviewers-table th,
-  .reviewers-table td {
+  .reviewers-table__cell {
     padding: 0.5rem;
     font-size: 0.85rem;
   }
 
-  .reviewer-avatar-small {
+  .reviewer-avatar--small {
     width: 30px;
     height: 30px;
   }
 
-  .reviewer-name-list {
+  .reviewer-name--list {
     font-size: 0.8rem;
   }
 
-  .stat-value-list {
+  .stat-value--list {
     font-size: 1rem;
   }
 
-  .details-btn-small {
+  .btn--small {
     padding: 0.4rem 0.8rem;
     font-size: 0.7rem;
     min-width: 60px;

@@ -3,17 +3,17 @@
 <%- include('head'); %>
 
   <body>
-    <div class="hero-container">
-      <header class="hero-header">
-        <h1 class="hero-title">Reviewers Heroes</h1>
+    <div class="dashboard">
+      <header class="dashboard__header">
+        <h1 class="dashboard__title">Reviewers Heroes</h1>
         <div class="view-controls">
-          <button class="view-btn active" data-view="grid" title="Visualização em Grid">
+          <button class="view-controls__btn view-controls__btn--active" data-view="grid" title="Visualização em Grid">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path
                 d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
             </svg>
           </button>
-          <button class="view-btn" data-view="list" title="Visualização em Lista">
+          <button class="view-controls__btn" data-view="list" title="Visualização em Lista">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z" />
             </svg>
@@ -21,38 +21,38 @@
         </div>
       </header>
 
-      <main class="hero-main">
+      <main class="dashboard__main">
         <div class="reviewers-grid">
           <% users.forEach(function(user, index){ %>
-            <div class="reviewer-card <%= user.totalReviews >= dangerLimitReviews ? 'danger' : '' %>">
-              <div class="reviewer-info">
-                <div class="reviewer-avatar">
-                  <img src="<%=user.avatarUrl%>" alt="<%=user.userName%>">
+            <div class="reviewer-card <%= user.totalReviews >= dangerLimitReviews ? 'reviewer-card--danger' : '' %>">
+              <div class="reviewer-card__info">
+                <div class="reviewer-card__avatar">
+                  <img src="<%=user.avatarUrl%>" alt="<%=user.userName%>" class="reviewer-card__avatar-img">
                 </div>
-                <div class="reviewer-details">
-                  <h2 class="reviewer-name">
+                <div class="reviewer-card__details">
+                  <h2 class="reviewer-card__name">
                     <%= user.userName %>
                   </h2>
-                  <div class="reviewer-stats">
+                  <div class="reviewer-card__stats">
                     <div class="stat-item">
-                      <span class="stat-icon">🏆</span>
-                      <span class="stat-value">
+                      <span class="stat-item__icon">🏆</span>
+                      <span class="stat-item__value">
                         <%= user.totalReviews %>
                       </span>
-                      <span class="stat-label">reviews</span>
+                      <span class="stat-item__label">reviews</span>
                     </div>
                     <div class="stat-item">
-                      <span class="stat-icon">👥</span>
-                      <span class="stat-value">
+                      <span class="stat-item__icon">👥</span>
+                      <span class="stat-item__value">
                         <%= user.totalAssignees %>
                       </span>
-                      <span class="stat-label">assignees</span>
+                      <span class="stat-item__label">assignees</span>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="reviewer-actions">
-                <a href="/details/<%=user.id%>" class="details-btn">Detalhes</a>
+              <div class="reviewer-card__actions">
+                <a href="/details/<%=user.id%>" class="btn btn--primary">Detalhes</a>
               </div>
             </div>
             <% }); %>
@@ -71,27 +71,28 @@
             </thead>
             <tbody>
               <% users.forEach(function(user, index){ %>
-                <tr class="reviewer-row <%= user.totalReviews >= dangerLimitReviews ? 'danger' : '' %>">
-                  <td class="reviewer-info-cell">
-                    <div class="reviewer-avatar-small">
-                      <img src="<%=user.avatarUrl%>" alt="<%=user.userName%>">
+                <tr
+                  class="reviewers-table__row <%= user.totalReviews >= dangerLimitReviews ? 'reviewers-table__row--danger' : '' %>">
+                  <td class="reviewers-table__cell reviewers-table__cell--info">
+                    <div class="reviewer-avatar reviewer-avatar--small">
+                      <img src="<%=user.avatarUrl%>" alt="<%=user.userName%>" class="reviewer-avatar__img">
                     </div>
-                    <span class="reviewer-name-list">
+                    <span class="reviewer-name reviewer-name--list">
                       <%=user.userName%>
                     </span>
                   </td>
-                  <td class="stat-cell">
-                    <span class="stat-value-list">
+                  <td class="reviewers-table__cell reviewers-table__cell--stat">
+                    <span class="stat-value stat-value--list">
                       <%=user.totalReviews%>
                     </span>
                   </td>
-                  <td class="stat-cell">
-                    <span class="stat-value-list">
+                  <td class="reviewers-table__cell reviewers-table__cell--stat">
+                    <span class="stat-value stat-value--list">
                       <%=user.totalAssignees%>
                     </span>
                   </td>
-                  <td class="actions-cell">
-                    <a href="/details/<%=user.id%>" class="details-btn-small">Detalhes</a>
+                  <td class="reviewers-table__cell reviewers-table__cell--actions">
+                    <a href="/details/<%=user.id%>" class="btn btn--small">Detalhes</a>
                   </td>
                 </tr>
                 <% }); %>
@@ -103,7 +104,7 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        const viewButtons = document.querySelectorAll('.view-btn');
+        const viewButtons = document.querySelectorAll('.view-controls__btn');
         const gridView = document.querySelector('.reviewers-grid');
         const listView = document.querySelector('.reviewers-list');
 
@@ -112,10 +113,10 @@
             const view = this.dataset.view;
 
             // Remover classe active de todos os botões
-            viewButtons.forEach(btn => btn.classList.remove('active'));
+            viewButtons.forEach(btn => btn.classList.remove('view-controls__btn--active'));
 
             // Adicionar classe active ao botão clicado
-            this.classList.add('active');
+            this.classList.add('view-controls__btn--active');
 
             // Alternar visualizações
             if (view === 'grid') {
