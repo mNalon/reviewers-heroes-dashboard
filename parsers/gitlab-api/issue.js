@@ -18,7 +18,8 @@ const parser = ({
   updated_at: updatedAt, // Ex: "2025-03-31T16:37:31.932-03:00", null
   closed_at: closedAt, // Ex: "2025-03-31T16:37:31.932-03:00", null
   closed_by: closedBy, // Ex: "Ayrton Vargas Witcel Fidelis", null
-  labels // Ex: ["Technical Debt"]
+  labels, // Ex: ["Technical Debt"]
+  references: { relative } // Ex: namespace/project-name#1
 }) => ({
   id,
   projectId,
@@ -29,7 +30,8 @@ const parser = ({
   updatedAt: parseISODate(updatedAt),
   closedAt: parseISODate(closedAt),
   closedBy: closedBy ? parseUser(closedBy) : null,
-  labels
+  labels,
+  projectReference: relative
 })
 
 export { parser }

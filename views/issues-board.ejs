@@ -9,43 +9,116 @@
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
-      overflow: auto; /* Habilita a rolagem se o conteúdo for maior que a tela */
+      overflow: auto;
     }
     #chart-container {
-      width: 1280px; /* Largura fixa */
-      height: 720px; /* Altura fixa */
+      width: 1280px;
+      height: 720px; 
       margin: auto;
       display: block;
       overflow: auto;
     }
     canvas {
-      width: 100% !important;  /* Para garantir que o gráfico ocupe toda a largura do container */
-      height: 100% !important; /* Para garantir que o gráfico ocupe toda a altura do container */
+      width: 100% !important;  /* To ensure the canvas takes up the full width of the container */
+      height: 100% !important; /* To ensure the canvas takes up the full height of the container */
+      display: block;
+    }
+
+    .label-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .label-tag {
+      background-color: #e0e7ff;
+      color: #1e3a8a;
+      padding: 0.3rem 0.6rem;
+      border-radius: 0.375rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .ranking-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .ranking-item {
+      background-color: #f9fafb;
+      border-left: 4px solid #4f46e5;
+      margin-bottom: 0.75rem;
+      padding: 1rem;
+      border-radius: 0.375rem;
+    }
+
+    .ranking-title {
+      font-weight: bold;
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .ranking-meta {
+      color: #6b7280;
+      font-size: 0.85rem;
     }
   </style>
 </head>
 <body>
   <h1>Issues Over Time</h1>
-  <h2>labels: <%= labels %></h2>
+  <h2>Filtered Issues by labels: <%= labels %></h2>
   <div id="chart-container">
     <canvas id="issuesChart"></canvas>
   </div>
+  
+  <h2>🔖 Issues Labels</h2>
+  <div class="label-cloud">
+    <% issuesSummary.labels.forEach(label => { %>
+    <span class="label-tag" id="<%=label.name%>"><%=label.name%> (<%=label.total%>)</span>
+    <% }) %>
+  </div>
+
+  <h2>📊 Projects Ranking </h2>
+  <ul class="ranking-list">
+    <% issuesSummary.totalIssuesByProject.forEach((project, index) => { %>
+    <li class="ranking-item">
+      <div class="ranking-title">
+      <%= index + 1 %>. <%= project.name %> 
+      </div>
+      <div class="ranking-meta">
+        <strong><%= project.totalIssues %></strong> issue<%= project.totalIssues !== 1 ? 's' : '' %>
+      </div>
+    </li>
+    <% }) %>
+  </ul>
+
+  <script>
+    document.querySelectorAll('.label-tag').forEach(
+      (element) => {
+        element.onclick = (evt) => { document.location.search="labels=" + evt.target.id }
+      }
+    )
+  </script>
 
   <script>
         const data =  <%- JSON.stringify(issuesCountByWeek) %>
 
-        console.log(data)
+        console.log('------CHART DATA------')
+        console.dir(data)
+        console.log('----------------------')
 
         const { notClosedIssuesByWeek, openedIssuesByWeek, closedIssuesByWeek } = data
 
-        // Prepara os dados para o gráfico
+        // Prepare the data for the chart
         const labels = notClosedIssuesByWeek.map((entry) => entry.week);
 
         const notClosedIssuesByWeekCounts = notClosedIssuesByWeek.map((entry) => entry.count);
         const openedIssuesByWeekCounts = openedIssuesByWeek.map((entry) => entry.count);
         const closedIssuesByWeekCounts = closedIssuesByWeek.map((entry) => entry.count);
 
-        // Configura o gráfico
+        // Set up the chart
         const ctx = document.getElementById('issuesChart').getContext('2d');
         new Chart(ctx, {
           type: 'line',
@@ -76,7 +149,7 @@
           },
           options: {
             responsive: true,
-            maintainAspectRatio: false, // Permite que o gráfico tenha o tamanho fixo especificado
+            maintainAspectRatio: false, 
             scales: {
               x: {
                 type: 'category',
@@ -86,7 +159,7 @@
                 },
                 ticks: {
                   autoSkip: true,
-                  maxTicksLimit: 20, // Limita o número de ticks no eixo X para evitar sobrecarga
+                  maxTicksLimit: 20, // Limits the number of ticks on the X axis to avoid overhead
                 },
                 reverse: false,
               },

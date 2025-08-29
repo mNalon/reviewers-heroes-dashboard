@@ -106,6 +106,48 @@ function getNumberOfClosedIssuesByWeek(issues, weeksInterval) {
   })
 }
 
+const getProjectNameFromReference = (reference) => reference.split('#')[0]
+
+function summarizeIssues(issues) {
+  const projectStats = new Map()
+  const labelStats = new Map()
+
+  for (const issue of issues) {
+    const issueIsOpened = issue.state === 'opened'
+
+    if (!issueIsOpened) {
+      continue
+    }
+
+    if (!projectStats.has(issue.projectId)) {
+      projectStats.set(issue.projectId, {
+        projectId: issue.projectId,
+        name: getProjectNameFromReference(issue.projectReference),
+        totalIssues: 0
+      })
+    }
+    projectStats.get(issue.projectId).totalIssues += 1
+
+    for (const label of issue.labels) {
+      if (!labelStats.has(label)) {
+        labelStats.set(label, {
+          name: label,
+          total: 0
+        })
+      }
+      labelStats.get(label).total += 1
+    }
+  }
+
+  const totalIssuesByProject = Array.from(projectStats.values())
+    .sort((a, b) => b.totalIssues - a.totalIssues)
+
+  return {
+    totalIssuesByProject,
+    labels: labelStats
+  }
+}
+
 /* GET home page. */
 router.get('/', (req, res) => {
   req.repositories.user.getAllUsersByGroupId(GROUP_ID)
@@ -178,7 +220,9 @@ router.get('/issues/:groupId', async (req, res) => {
       closedIssuesByWeek: getNumberOfClosedIssuesByWeek(issues, weeksInterval)
     }
 
-    res.render('issues-board', { issuesCountByWeek, labels: labelsQueryParam })
+    const issuesSummary = summarizeIssues(issues)
+
+    res.render('issues-board', { issuesCountByWeek, labels: labelsQueryParam, issuesSummary })
   }).catch((err) => {
     res.status(500)
     res.json(err)
