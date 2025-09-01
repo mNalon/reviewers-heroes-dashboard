@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
-<%- include('head'); %>
-
+  <%- include('head'); %>
   <body>
     <div class="dashboard">
       <header class="dashboard__header">
@@ -55,7 +54,7 @@
                 <a href="/details/<%=user.id%>" class="btn btn--primary">Detalhes</a>
               </div>
             </div>
-            <% }); %>
+          <% }); %>
         </div>
 
         <div class="reviewers-list" style="display: none;">
@@ -63,9 +62,9 @@
             <thead>
               <tr>
                 <th>Revisor</th>
-                <th>Reviews</th>
-                <th>Assignees</th>
-                <th>Ações</th>
+                <th class="reviewers-table__header--center">Reviews</th>
+                <th class="reviewers-table__header--center">Assignees</th>
+                <th class="reviewers-table__header--center">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -80,21 +79,21 @@
                       <%=user.userName%>
                     </span>
                   </td>
-                  <td class="reviewers-table__cell reviewers-table__cell--stat">
+                  <td class="reviewers-table__cell reviewers-table__cell--stat reviewers-table__cell--center">
                     <span class="stat-value stat-value--list">
                       <%=user.totalReviews%>
                     </span>
                   </td>
-                  <td class="reviewers-table__cell reviewers-table__cell--stat">
+                  <td class="reviewers-table__cell reviewers-table__cell--stat reviewers-table__cell--center">
                     <span class="stat-value stat-value--list">
                       <%=user.totalAssignees%>
                     </span>
                   </td>
-                  <td class="reviewers-table__cell reviewers-table__cell--actions">
+                  <td class="reviewers-table__cell reviewers-table__cell--actions reviewers-table__cell--center">
                     <a href="/details/<%=user.id%>" class="btn btn--small">Detalhes</a>
                   </td>
                 </tr>
-                <% }); %>
+              <% }); %>
             </tbody>
           </table>
         </div>

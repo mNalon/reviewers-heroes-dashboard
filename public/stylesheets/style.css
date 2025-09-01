@@ -267,6 +267,14 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.reviewers-table th.reviewers-table__header--center {
+  text-align: center;
+}
+
+.reviewers-table td.reviewers-table__cell--center {
+  text-align: center;
+}
+
 .reviewers-table td {
   padding: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -300,8 +308,16 @@ body {
   text-align: left;
 }
 
+.reviewers-table__cell--stat.reviewers-table__cell--center {
+  text-align: center;
+}
+
 .reviewers-table__cell--actions {
   text-align: left;
+}
+
+.reviewers-table__cell--actions.reviewers-table__cell--center {
+  text-align: center;
 }
 
 .reviewer-avatar--small {
