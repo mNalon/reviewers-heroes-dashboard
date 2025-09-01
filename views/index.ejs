@@ -58,7 +58,6 @@
             <% }); %>
         </div>
 
-        <!-- Visualização em Lista -->
         <div class="reviewers-list" style="display: none;">
           <table class="reviewers-table">
             <thead>
@@ -112,13 +111,10 @@
           button.addEventListener('click', function () {
             const view = this.dataset.view;
 
-            // Remover classe active de todos os botões
             viewButtons.forEach(btn => btn.classList.remove('view-controls__btn--active'));
 
-            // Adicionar classe active ao botão clicado
             this.classList.add('view-controls__btn--active');
 
-            // Alternar visualizações
             if (view === 'grid') {
               gridView.style.display = 'grid';
               listView.style.display = 'none';
@@ -127,12 +123,10 @@
               listView.style.display = 'block';
             }
 
-            // Salvar preferência no localStorage
             localStorage.setItem('viewMode', view);
           });
         });
 
-        // Carregar preferência salva
         const savedView = localStorage.getItem('viewMode') || 'grid';
         const targetButton = document.querySelector(`[data-view="${savedView}"]`);
         if (targetButton) {

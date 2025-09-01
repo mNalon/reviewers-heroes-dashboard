@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
-<%- include('head'); %>
-
+  <%- include('head'); %>
   <body>
     <div class="details">
       <header class="details__header">
@@ -31,20 +30,12 @@
                       <%= mr.title %>
                     </td>
                     <td class="details__table-cell details__table-cell--date">
-                      <% if (mr.createdAt) { %>
-                        <%= new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' , month: '2-digit' ,
-                          year: 'numeric' }) %>
-                          <% } else { %>
-                            -
-                            <% } %>
+                      <%= mr.createdAt ? new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' ,
+                        month: '2-digit' , year: 'numeric' }) : '-' %>
                     </td>
                     <td class="details__table-cell details__table-cell--date">
-                      <% if (mr.updatedAt) { %>
-                        <%= new Date(mr.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit' , month: '2-digit' ,
-                          year: 'numeric' }) %>
-                          <% } else { %>
-                            -
-                            <% } %>
+                      <%= mr.updatedAt ? new Date(mr.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit' ,
+                        month: '2-digit' , year: 'numeric' }) : '-' %>
                     </td>
                     <td class="details__table-cell">
                       <%= mr.author && mr.author.userName %>
@@ -56,19 +47,19 @@
                       <%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %>
                     </td>
                   </tr>
-                  <% }); %>
-                    <tr class="details__table-row--total">
-                      <td class="details__table-cell"><strong>Total:</strong></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell details__table-cell--total-value">
-                        <strong>
-                          <%=totalOpenedReviewEstimatedTime%>
-                        </strong>
-                      </td>
-                    </tr>
+                <% }); %>
+                  <tr class="details__table-row--total">
+                    <td class="details__table-cell"><strong>Total:</strong></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell details__table-cell--total-value">
+                      <strong>
+                        <%=totalOpenedReviewEstimatedTime%>
+                      </strong>
+                    </td>
+                  </tr>
               </tbody>
             </table>
           </div>
@@ -95,20 +86,12 @@
                       <%= mr.title %>
                     </td>
                     <td class="details__table-cell details__table-cell--date">
-                      <% if (mr.createdAt) { %>
-                        <%= new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' , month: '2-digit' ,
-                          year: 'numeric' }) %>
-                          <% } else { %>
-                            -
-                            <% } %>
+                      <%= mr.createdAt ? new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' ,
+                        month: '2-digit' , year: 'numeric' }) : '-' %>
                     </td>
                     <td class="details__table-cell details__table-cell--date">
-                      <% if (mr.updatedAt) { %>
-                        <%= new Date(mr.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit' , month: '2-digit' ,
-                          year: 'numeric' }) %>
-                          <% } else { %>
-                            -
-                            <% } %>
+                      <%= mr.updatedAt ? new Date(mr.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit' ,
+                        month: '2-digit' , year: 'numeric' }) : '-' %>
                     </td>
                     <td class="details__table-cell">
                       <%= mr.revisor && mr.revisor.userName %>
@@ -120,19 +103,19 @@
                       <%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %>
                     </td>
                   </tr>
-                  <% }); %>
-                    <tr class="details__table-row--total">
-                      <td class="details__table-cell"><strong>Total:</strong></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell details__table-cell--total-value">
-                        <strong>
-                          <%=totalOpenedEstimatedTime%>
-                        </strong>
-                      </td>
-                    </tr>
+                <% }); %>
+                  <tr class="details__table-row--total">
+                    <td class="details__table-cell"><strong>Total:</strong></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell details__table-cell--total-value">
+                      <strong>
+                        <%=totalOpenedEstimatedTime%>
+                      </strong>
+                    </td>
+                  </tr>
               </tbody>
             </table>
           </div>
@@ -159,12 +142,8 @@
                       <%= mr.title %>
                     </td>
                     <td class="details__table-cell details__table-cell--date">
-                      <% if (mr.createdAt) { %>
-                        <%= new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' , month: '2-digit' ,
-                          year: 'numeric' }) %>
-                          <% } else { %>
-                            -
-                            <% } %>
+                      <%= mr.createdAt ? new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' ,
+                        month: '2-digit' , year: 'numeric' }) : '-' %>
                     </td>
                     <td class="details__table-cell">
                       <%= mr.author && mr.author.userName %>
@@ -179,19 +158,19 @@
                       <%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %>
                     </td>
                   </tr>
-                  <% }); %>
-                    <tr class="details__table-row--total">
-                      <td class="details__table-cell"><strong>Total:</strong></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell"></td>
-                      <td class="details__table-cell details__table-cell--total-value">
-                        <strong>
-                          <%=totalMergedEstimatedTime%>
-                        </strong>
-                      </td>
-                    </tr>
+                <% }); %>
+                  <tr class="details__table-row--total">
+                    <td class="details__table-cell"><strong>Total:</strong></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell details__table-cell--total-value">
+                      <strong>
+                        <%=totalMergedEstimatedTime%>
+                      </strong>
+                    </td>
+                  </tr>
               </tbody>
             </table>
           </div>

@@ -1,4 +1,3 @@
-/* Global Styles */
 * {
   margin: 0;
   padding: 0;
@@ -19,7 +18,6 @@ body {
   padding: 2rem;
 }
 
-/* Header Styles */
 .dashboard__header {
   text-align: center;
   margin-bottom: 3rem;
@@ -38,7 +36,6 @@ body {
   margin: 0;
 }
 
-/* Controles de Visualização */
 .view-controls {
   display: flex;
   background: rgba(255, 255, 255, 0.1);
@@ -76,7 +73,6 @@ body {
   height: 16px;
 }
 
-/* Main Content */
 .dashboard__main {
   width: 100%;
 }
@@ -88,7 +84,6 @@ body {
   align-items: start;
 }
 
-/* Reviewer Card Styles */
 .reviewer-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -132,16 +127,13 @@ body {
   opacity: 1;
 }
 
-/* Reviewer Info */
 .reviewer-card__info {
   display: flex;
   align-items: center;
   gap: 1.5rem;
   flex: 1;
   min-width: 0;
-  /* Permite que o container encolha */
   overflow: hidden;
-  /* Previne overflow */
 }
 
 .reviewer-card__avatar {
@@ -162,13 +154,10 @@ body {
   transform: scale(1.05);
 }
 
-/* Reviewer Details */
 .reviewer-card__details {
   flex: 1;
   min-width: 0;
-  /* Permite que o flex item encolha além do tamanho do conteúdo */
   overflow: hidden;
-  /* Previne overflow */
 }
 
 .reviewer-card__name {
@@ -212,7 +201,6 @@ body {
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Reviewer Actions */
 .reviewer-card__actions {
   text-align: center;
   margin-top: 1.5rem;
@@ -256,7 +244,6 @@ body {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Visualização em Lista */
 .reviewers-list {
   width: 100%;
   margin-top: 2rem;
@@ -343,7 +330,6 @@ body {
   color: #ffffff;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .dashboard {
     padding: 1rem;
@@ -401,7 +387,6 @@ body {
   .reviewer-card__name {
     font-size: 1.25rem;
     white-space: normal;
-    /* Permite quebra de linha em mobile */
     line-height: 1.3;
   }
 
@@ -438,9 +423,7 @@ body {
   .reviewer-card__name {
     font-size: 1.1rem;
     word-break: break-word;
-    /* Quebra palavras longas se necessário */
     hyphens: auto;
-    /* Adiciona hífens automáticos */
   }
 
   .reviewer-card__stats {
@@ -452,7 +435,6 @@ body {
     margin-top: 0.5rem;
   }
 
-  /* Responsividade da tabela em mobile */
   .reviewers-table th,
   .reviewers-table__cell {
     padding: 0.5rem;
@@ -479,7 +461,6 @@ body {
   }
 }
 
-/* Animation for page load */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -520,7 +501,6 @@ body {
   animation-delay: 0.6s;
 }
 
-/* Details Page Styles */
 .details {
   max-width: 1400px;
   margin: 0 auto;
@@ -694,7 +674,6 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Responsive Design for Details */
 @media (max-width: 768px) {
   .details {
     padding: 1rem;
@@ -815,14 +794,12 @@ body {
     min-width: 40px;
   }
 
-  /* Ocultar algumas colunas em telas muito pequenas */
   .details__table th:nth-child(3),
   .details__table-cell:nth-child(3) {
     display: none;
   }
 }
 
-/* Para telas muito pequenas */
 @media (max-width: 320px) {
   .details {
     padding: 0.5rem;
