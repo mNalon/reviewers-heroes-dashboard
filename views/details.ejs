@@ -2,97 +2,181 @@
 <html>
   <%- include('head'); %>
   <body>
-    <h2>Detalhes dos MRs atribuidos como revisor</h2>
-    <table class="table table-bordered table-active">
-      <thead>
-        <tr>
-          <th scope="col">Título</th>
-          <th scope="col">Data de criação</th>
-          <th scope="col">Data de atualização</th>
-          <th scope="col">Autor</th>
-          <th scope="col">Link</th>
-          <th scope="col">Tempo estimado (min)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% openedReviewMRs.forEach(function(mr){ %>
-          <tr>
-            <th scope="row"><%= mr.title %></th>
-            <td><%= mr.createdAt %></td>
-            <td><%= mr.updatedAt %></td>
-            <td><%= mr.author && mr.author.userName %></td>
-            <td><a href="<%=mr.webUrl%>"><%=mr.webUrl%></a></td>
-            <td><%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %></td>
-          </tr>
-        <% }); %>
-        <tr>
-          <th colspan="5"></th>
-          <td><b>Total: <%=totalOpenedReviewEstimatedTime%></b></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="details">
+      <header class="details__header">
+        <a href="/" class="btn btn--back">←</a>
+        <h1 class="details__title">Detalhes do Revisor</h1>
+      </header>
 
+      <main class="details__main">
+        <section class="details__section">
+          <h2 class="details__section-title">MRs atribuídos como revisor</h2>
+          <div class="details__table-container">
+            <table class="details__table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Data de criação</th>
+                  <th>Data de atualização</th>
+                  <th>Autor</th>
+                  <th class="details__table-header--center">Link</th>
+                  <th>Tempo estimado (min)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% openedReviewMRs.forEach(function(mr){ %>
+                  <tr>
+                    <td class="details__table-cell details__table-cell--title" title="<%= mr.title %>">
+                      <%= mr.title %>
+                    </td>
+                    <td class="details__table-cell details__table-cell--date">
+                      <%= mr.createdAt ? new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' ,
+                        month: '2-digit' , year: 'numeric' }) : '-' %>
+                    </td>
+                    <td class="details__table-cell details__table-cell--date">
+                      <%= mr.updatedAt ? new Date(mr.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit' ,
+                        month: '2-digit' , year: 'numeric' }) : '-' %>
+                    </td>
+                    <td class="details__table-cell">
+                      <%= mr.author && mr.author.userName %>
+                    </td>
+                    <td class="details__table-cell details__table-cell--link">
+                      <a href="<%=mr.webUrl%>" class="btn btn--link" target="_blank">Ver MR</a>
+                    </td>
+                    <td class="details__table-cell details__table-cell--time">
+                      <%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %>
+                    </td>
+                  </tr>
+                <% }); %>
+                  <tr class="details__table-row--total">
+                    <td class="details__table-cell"><strong>Total:</strong></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell details__table-cell--total-value">
+                      <strong>
+                        <%=totalOpenedReviewEstimatedTime%>
+                      </strong>
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-    <h2>Detalhes dos MRs abertos (assignee)</h2>
-    <table class="table table-bordered table-active">
-      <thead>
-        <tr>
-          <th scope="col">Título</th>
-          <th scope="col">Data de criação</th>
-          <th scope="col">Data de atualização</th>
-          <th scope="col">Revisor</th>
-          <th scope="col">Link</th>
-          <th scope="col">Tempo estimado (min)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% openedMRs.forEach(function(mr){ %>
-          <tr>
-            <th scope="row"><%= mr.title %></th>
-            <td><%= mr.createdAt %></td>
-            <td><%= mr.updatedAt %></td>
-            <td><%= mr.revisor && mr.revisor.userName %></td>
-            <td><a href="<%=mr.webUrl%>"><%=mr.webUrl%></a></td>
-            <td><%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %></td>
-          </tr>
-        <% }); %>
-        <tr>
-          <th colspan="5"></th>
-          <td><b>Total: <%=totalOpenedEstimatedTime%></b></td>
-        </tr>
-      </tbody>
-    </table>
+        <section class="details__section">
+          <h2 class="details__section-title">MRs abertos (assignee)</h2>
+          <div class="details__table-container">
+            <table class="details__table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Data de criação</th>
+                  <th>Data de atualização</th>
+                  <th>Revisor</th>
+                  <th class="details__table-header--center">Link</th>
+                  <th>Tempo estimado (min)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% openedMRs.forEach(function(mr){ %>
+                  <tr>
+                    <td class="details__table-cell details__table-cell--title" title="<%= mr.title %>">
+                      <%= mr.title %>
+                    </td>
+                    <td class="details__table-cell details__table-cell--date">
+                      <%= mr.createdAt ? new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' ,
+                        month: '2-digit' , year: 'numeric' }) : '-' %>
+                    </td>
+                    <td class="details__table-cell details__table-cell--date">
+                      <%= mr.updatedAt ? new Date(mr.updatedAt).toLocaleDateString('pt-BR', { day: '2-digit' ,
+                        month: '2-digit' , year: 'numeric' }) : '-' %>
+                    </td>
+                    <td class="details__table-cell">
+                      <%= mr.revisor && mr.revisor.userName %>
+                    </td>
+                    <td class="details__table-cell details__table-cell--link">
+                      <a href="<%=mr.webUrl%>" class="btn btn--link" target="_blank">Ver MR</a>
+                    </td>
+                    <td class="details__table-cell details__table-cell--time">
+                      <%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %>
+                    </td>
+                  </tr>
+                <% }); %>
+                  <tr class="details__table-row--total">
+                    <td class="details__table-cell"><strong>Total:</strong></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell details__table-cell--total-value">
+                      <strong>
+                        <%=totalOpenedEstimatedTime%>
+                      </strong>
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-
-    <h2>Detalhes dos MRs revisados e fechados na última semana</h2>
-    <table class="table table-bordered table-active">
-      <thead>
-        <tr>
-          <th scope="col">Título</th>
-          <th scope="col">Data de criação</th>
-          <th scope="col">Autor</th>
-          <th scope="col">Mergeado por</th>
-          <th scope="col">Link</th>
-          <th scope="col">Tempo estimado (min)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% mergedMRs.forEach(function(mr){ %>
-          <tr>
-            <th scope="row"><%= mr.title %></th>
-            <td><%= mr.createdAt %></td>
-            <td><%= mr.author && mr.author.userName %></td>
-            <td><%= mr.mergedBy.userName %></td>
-            <td><a href="<%=mr.webUrl%>"><%=mr.webUrl%></a></td>
-            <td><%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %></td>
-          </tr>
-        <% }); %>
-        <tr>
-          <th colspan="5"></th>
-          <td><b>Total: <%=totalMergedEstimatedTime%></b></td>
-        </tr>
-      </tbody>
-    </table>
+        <section class="details__section">
+          <h2 class="details__section-title">MRs revisados e fechados na última semana</h2>
+          <div class="details__table-container">
+            <table class="details__table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Data de criação</th>
+                  <th>Autor</th>
+                  <th>Mergeado por</th>
+                  <th class="details__table-header--center">Link</th>
+                  <th>Tempo estimado (min)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% mergedMRs.forEach(function(mr){ %>
+                  <tr>
+                    <td class="details__table-cell details__table-cell--title" title="<%= mr.title %>">
+                      <%= mr.title %>
+                    </td>
+                    <td class="details__table-cell details__table-cell--date">
+                      <%= mr.createdAt ? new Date(mr.createdAt).toLocaleDateString('pt-BR', { day: '2-digit' ,
+                        month: '2-digit' , year: 'numeric' }) : '-' %>
+                    </td>
+                    <td class="details__table-cell">
+                      <%= mr.author && mr.author.userName %>
+                    </td>
+                    <td class="details__table-cell">
+                      <%= mr.mergedBy.userName %>
+                    </td>
+                    <td class="details__table-cell details__table-cell--link">
+                      <a href="<%=mr.webUrl%>" class="btn btn--link" target="_blank">Ver MR</a>
+                    </td>
+                    <td class="details__table-cell details__table-cell--time">
+                      <%= mr.timeEstimate ? mr.timeEstimate/60 : 'Não especificado' %>
+                    </td>
+                  </tr>
+                <% }); %>
+                  <tr class="details__table-row--total">
+                    <td class="details__table-cell"><strong>Total:</strong></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell"></td>
+                    <td class="details__table-cell details__table-cell--total-value">
+                      <strong>
+                        <%=totalMergedEstimatedTime%>
+                      </strong>
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
   </body>
-</html>
 
+</html>
