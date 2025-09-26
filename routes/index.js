@@ -177,6 +177,36 @@ router.get('/', (req, res) => {
     .catch(errorHandler(req, res))
 })
 
+router.get('/reviewers/:groupId', (req, res) => {
+  const { groupId } = req.params
+
+  req.repositories.user.getAllUsersByGroupId(groupId)
+    .then((users) => (
+      Promise.all(users.map(async (user) => {
+        const {
+          getTotalOpenedAssigneesByUserId,
+          getTotalOpennedReviewMRByUserId
+        } = req.repositories.mergeRequest
+
+        const [totalAssignees, totalReviews] = await Promise.all([
+          getTotalOpenedAssigneesByUserId(user.id),
+          getTotalOpennedReviewMRByUserId(user.id)
+        ])
+
+        return {
+          ...user,
+          totalAssignees,
+          totalReviews
+        }
+      }))
+    ))
+    .then((user) => user.sort(sortDecreasingReviewers))
+    .then((users) => res.render('index', {
+      users, dangerLimitReviews: DANGER_LIMIT_ASSIGNEES
+    }))
+    .catch(errorHandler(req, res))
+})
+
 router.get('/details/:id', (req, res) => {
   const userId = req.params.id
 
