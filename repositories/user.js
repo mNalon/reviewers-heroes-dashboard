@@ -7,6 +7,13 @@ const getAllUsersByGroupId = ({ clients }) => (groupId) => (
     .then((users) => users.map(parseUser))
 )
 
+const getOnlyDirectMemberUsersByGroupId = ({ clients }) => (groupId) => (
+  clients.gitlabApi(`/groups/${groupId}/members?per_page=${GROUP_MEMBERS_TOTAL_LIMIT}`)
+    .then((body) => body.json())
+    .then((users) => users.map(parseUser))
+)
+
 export const createUserRepository = ({ clients }) => ({
-  getAllUsersByGroupId: getAllUsersByGroupId({ clients })
+  getAllUsersByGroupId: getAllUsersByGroupId({ clients }),
+  getOnlyDirectMemberUsersByGroupId: getOnlyDirectMemberUsersByGroupId({ clients })
 })
