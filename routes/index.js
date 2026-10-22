@@ -148,9 +148,17 @@ function summarizeIssues(issues) {
   }
 }
 
+const getUsersByGroupId = (req, groupId) => {
+  const { getAllUsersByGroupId, getOnlyDirectMemberUsersByGroupId } = req.repositories.user
+
+  return req.query.onlyDirectMembers === 'true'
+    ? getOnlyDirectMemberUsersByGroupId(groupId)
+    : getAllUsersByGroupId(groupId)
+}
+
 /* GET home page. */
 router.get('/', (req, res) => {
-  req.repositories.user.getAllUsersByGroupId(GROUP_ID)
+  getUsersByGroupId(req, GROUP_ID)
     .then((users) => (
       Promise.all(users.map(async (user) => {
         const {
@@ -180,7 +188,7 @@ router.get('/', (req, res) => {
 router.get('/reviewers/:groupId', (req, res) => {
   const { groupId } = req.params
 
-  req.repositories.user.getAllUsersByGroupId(groupId)
+  getUsersByGroupId(req, groupId)
     .then((users) => (
       Promise.all(users.map(async (user) => {
         const {
