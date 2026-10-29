@@ -1,178 +1,399 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Issues Over Time</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      overflow: auto;
-    }
-    #chart-container {
-      width: 1280px;
-      height: 720px; 
-      margin: auto;
-      display: block;
-      overflow: auto;
-    }
-    canvas {
-      width: 100% !important;  /* To ensure the canvas takes up the full width of the container */
-      height: 100% !important; /* To ensure the canvas takes up the full height of the container */
-      display: block;
-    }
+<html>
+  <%- include('head'); %>
+  <body class="issues-board-light">
+    <div class="details">
+      <header class="details__header">
+        <a href="/" class="btn btn--back">←</a>
+        <h1 class="details__title">Issues Board</h1>
+      </header>
 
-    .label-cloud {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-    }
+      <% const activeLabels = labels ? labels.split(',') : [] %>
+      <main class="details__main">
+        <div class="label-picker">
+          <span class="label-picker__title"><%= activeLabels.length ? 'Label ativa' : 'Todas as labels' %></span>
+          <div class="label-cloud">
+            <span
+              class="label-tag <%= activeLabels.length ? '' : 'label-tag--active' %>"
+              data-label=""
+            >Todas</span>
+            <% issuesSummary.labels.forEach(label => { %>
+            <span
+              class="label-tag <%= activeLabels.includes(label.name) ? 'label-tag--active' : '' %>"
+              data-label="<%= label.name %>"
+            ><%= label.name %> (<%= label.total %>)</span>
+            <% }) %>
+          </div>
+        </div>
 
-    .label-tag {
-      background-color: #e0e7ff;
-      color: #1e3a8a;
-      padding: 0.3rem 0.6rem;
-      border-radius: 0.375rem;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-    }
+        <section class="details__section">
+          <h2 class="details__section-title">Issues ao longo do tempo</h2>
+          <p class="issues-board__hint">Clique em um ponto do gráfico para abrir os detalhes daquela semana no painel lateral.</p>
+          <div class="issues-board__chart-container">
+            <canvas id="issuesChart"></canvas>
+          </div>
+        </section>
 
-    .ranking-list {
-      list-style: none;
-      padding-left: 0;
-    }
+        <section class="details__section">
+          <h2 class="details__section-title">Idade × inatividade (issues abertas)</h2>
+          <p class="issues-board__hint">Cada ponto é uma issue aberta. Clique para ver os detalhes dela no painel lateral.</p>
+          <div class="aging-stats">
+            <div class="aging-stat">
+              <span class="aging-stat__label">Backlog atual</span>
+              <span class="aging-stat__value"><%= agingStats.totalBacklog %></span>
+            </div>
+            <div class="aging-stat">
+              <span class="aging-stat__label">Sem atividade há mais de <%= agingStats.staleDays %> dias</span>
+              <span class="aging-stat__value"><%= agingStats.inactivePercent %>%</span>
+              <span class="aging-stat__hint"><%= agingStats.inactiveCount %> issue<%= agingStats.inactiveCount !== 1 ? 's' : '' %></span>
+            </div>
+            <div class="aging-stat">
+              <span class="aging-stat__label">Velhas e paradas</span>
+              <span class="aging-stat__value"><%= agingStats.staleCount %></span>
+              <span class="aging-stat__hint"><%= agingStats.oldDays %>d+ de idade, <%= agingStats.staleDays %>d+ sem atividade</span>
+            </div>
+          </div>
+          <div class="issues-board__chart-container">
+            <canvas id="agingChart"></canvas>
+          </div>
+        </section>
 
-    .ranking-item {
-      background-color: #f9fafb;
-      border-left: 4px solid #4f46e5;
-      margin-bottom: 0.75rem;
-      padding: 1rem;
-      border-radius: 0.375rem;
-    }
+        <section class="details__section">
+          <h2 class="details__section-title">Acompanhamento por período</h2>
+          <p class="issues-board__hint">Selecione a data do último alinhamento para visualizar o que foi aberto ou fechado de lá até hoje.</p>
+          <form class="checkpoint-form" method="GET" action="">
+            <input type="hidden" name="labels" value="<%= labels %>">
+            <input
+              class="checkpoint-form__input"
+              type="date"
+              name="since"
+              value="<%= sinceLastCheck ? sinceLastCheck.date : '' %>"
+            >
+            <button type="submit" class="btn btn--primary">Filtrar novidades</button>
+          </form>
+        </section>
 
-    .ranking-title {
-      font-weight: bold;
-      font-size: 1rem;
-      margin-bottom: 0.3rem;
-    }
+        <% if (sinceLastCheck) { %>
+        <section class="details__section">
+          <h2 class="details__section-title">Issues desde <%= sinceLastCheck.date %> (<%= sinceLastCheck.issues.length %>)</h2>
+          <div class="details__table-container">
+            <table class="details__table">
+              <thead>
+                <tr><th class="details__table-header--status">Status</th><th class="details__table-header--project">Projeto</th><th>Título</th><th class="details__table-header--project">Autor</th><th class="details__table-header--project">Assignee</th><th class="details__table-header--labels">Labels</th><th class="details__table-header--center details__table-header--link">GitLab</th></tr>
+              </thead>
+              <tbody>
+                <% sinceLastCheck.issues.forEach((issue) => { %>
+                <tr>
+                  <td class="details__table-cell details__table-cell--status">
+                    <span class="status-badge status-badge--<%= issue.state %>"><%= issue.state === 'opened' ? 'Aberta' : 'Fechada' %></span>
+                  </td>
+                  <td class="details__table-cell details__table-cell--project" title="<%= issue.projectName %>"><%= issue.projectName %></td>
+                  <td class="details__table-cell details__table-cell--title" title="<%= issue.title %>"><%= issue.title %></td>
+                  <td class="details__table-cell details__table-cell--project" title="<%= issue.author || '' %>"><%= issue.author || '-' %></td>
+                  <td class="details__table-cell details__table-cell--project" title="<%= (issue.assignees || []).join(', ') %>"><%= (issue.assignees || []).join(', ') || 'Sem assignee' %></td>
+                  <td class="details__table-cell details__table-cell--labels" title="<%= (issue.labels || []).join(', ') %>"><%= (issue.labels || []).join(', ') %></td>
+                  <td class="details__table-cell details__table-cell--link">
+                    <% if (issue.webUrl) { %>
+                    <a href="<%= issue.webUrl %>" class="btn btn--link" target="_blank" rel="noopener noreferrer">#<%= issue.id %></a>
+                    <% } else { %>
+                    #<%= issue.id %>
+                    <% } %>
+                  </td>
+                </tr>
+                <% }) %>
+                <% if (!sinceLastCheck.issues.length) { %>
+                <tr><td class="details__table-cell" colspan="7">Nenhuma issue aberta ou fechada desde essa data.</td></tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <% } %>
 
-    .ranking-meta {
-      color: #6b7280;
-      font-size: 0.85rem;
-    }
-  </style>
-</head>
-<body>
-  <h1>Issues Over Time</h1>
-  <h2>Filtered Issues by labels: <%= labels %></h2>
-  <div id="chart-container">
-    <canvas id="issuesChart"></canvas>
-  </div>
-  
-  <h2>🔖 Issues Labels</h2>
-  <div class="label-cloud">
-    <% issuesSummary.labels.forEach(label => { %>
-    <span class="label-tag" id="<%=label.name%>"><%=label.name%> (<%=label.total%>)</span>
-    <% }) %>
-  </div>
+        <section class="details__section">
+          <h2 class="details__section-title">Ranking de projetos</h2>
+          <p class="issues-board__hint">Clique em um projeto para ver as issues dele no GitLab.</p>
+          <ul class="ranking-list">
+            <% const labelParams = activeLabels.filter(Boolean).map((label) => `label_name[]=${encodeURIComponent(label)}`).join('&') %>
+            <% issuesSummary.totalIssuesByProject.forEach((project, index) => { %>
+            <li>
+              <% if (project.issuesUrl) { %>
+              <a
+                class="ranking-item"
+                href="<%= project.issuesUrl %><%= labelParams ? '?' + labelParams : '' %>"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div class="ranking-title"><%= index + 1 %>. <%= project.name %></div>
+                <div class="ranking-meta">
+                  <strong><%= project.totalIssues %></strong> issue<%= project.totalIssues !== 1 ? 's' : '' %>
+                </div>
+              </a>
+              <% } else { %>
+              <div class="ranking-item">
+                <div class="ranking-title"><%= index + 1 %>. <%= project.name %></div>
+                <div class="ranking-meta">
+                  <strong><%= project.totalIssues %></strong> issue<%= project.totalIssues !== 1 ? 's' : '' %>
+                </div>
+              </div>
+              <% } %>
+            </li>
+            <% }) %>
+          </ul>
+        </section>
+      </main>
+    </div>
 
-  <h2>📊 Projects Ranking </h2>
-  <ul class="ranking-list">
-    <% issuesSummary.totalIssuesByProject.forEach((project, index) => { %>
-    <li class="ranking-item">
-      <div class="ranking-title">
-      <%= index + 1 %>. <%= project.name %> 
+    <div id="issue-drawer-backdrop" class="issue-drawer-backdrop"></div>
+    <aside id="issue-drawer" class="issue-drawer" aria-hidden="true">
+      <div class="issue-drawer__header">
+        <h2 class="issue-drawer__title" id="issue-drawer-title">Detalhes da semana</h2>
+        <button type="button" class="issue-drawer__close" id="issue-drawer-close" aria-label="Fechar">&times;</button>
       </div>
-      <div class="ranking-meta">
-        <strong><%= project.totalIssues %></strong> issue<%= project.totalIssues !== 1 ? 's' : '' %>
+      <div class="issue-drawer__body" id="issue-drawer-body">
+        <p class="issues-board__hint">Clique em um ponto do gráfico para ver quais issues foram abertas, fechadas ou seguem em aberto naquela semana.</p>
       </div>
-    </li>
-    <% }) %>
-  </ul>
+    </aside>
 
-  <script>
-    document.querySelectorAll('.label-tag').forEach(
-      (element) => {
-        element.onclick = (evt) => { document.location.search="labels=" + evt.target.id }
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      document.querySelectorAll('.label-tag').forEach(
+        (element) => {
+          element.onclick = (evt) => {
+            const { label } = evt.currentTarget.dataset
+            const isActive = evt.currentTarget.classList.contains('label-tag--active')
+            const params = new URLSearchParams(document.location.search)
+
+            if (label && !isActive) {
+              params.set('labels', label)
+            } else {
+              params.delete('labels')
+            }
+
+            document.location.search = params.toString()
+          }
+        }
+      )
+    </script>
+
+    <script>
+      const data = <%- JSON.stringify(issuesCountByWeek).replace(/</g, '\\u003c') %>
+      const agingStats = <%- JSON.stringify(agingStats).replace(/</g, '\\u003c') %>
+
+      const { notClosedIssuesByWeek, openedIssuesByWeek, closedIssuesByWeek } = data
+
+      // Prepare the data for the chart
+      const chartLabels = notClosedIssuesByWeek.map((entry) => entry.shortLabel)
+      const fullWeekLabels = notClosedIssuesByWeek.map((entry) => entry.week)
+
+      const notClosedIssuesByWeekCounts = notClosedIssuesByWeek.map((entry) => entry.count)
+      const openedIssuesByWeekCounts = openedIssuesByWeek.map((entry) => entry.count)
+      const closedIssuesByWeekCounts = closedIssuesByWeek.map((entry) => entry.count)
+
+      // Each dataset index maps to its own week list, so a click can look up the matching issues
+      const datasetsByIndex = [notClosedIssuesByWeek, openedIssuesByWeek, closedIssuesByWeek]
+      const datasetLabels = ['Open Issues', 'Opened Issues By Week', 'Closed Issues By Week']
+
+      function escapeHtml(value) {
+        const div = document.createElement('div')
+        div.innerText = value == null ? '' : value
+        return div.innerHTML
       }
-    )
-  </script>
 
-  <script>
-        const data =  <%- JSON.stringify(issuesCountByWeek) %>
+      const drawer = document.getElementById('issue-drawer')
+      const drawerBackdrop = document.getElementById('issue-drawer-backdrop')
+      const drawerTitle = document.getElementById('issue-drawer-title')
+      const drawerBody = document.getElementById('issue-drawer-body')
 
-        console.log('------CHART DATA------')
-        console.dir(data)
-        console.log('----------------------')
+      function openDrawer() {
+        drawer.classList.add('issue-drawer--open')
+        drawerBackdrop.classList.add('issue-drawer-backdrop--visible')
+        drawer.setAttribute('aria-hidden', 'false')
+      }
 
-        const { notClosedIssuesByWeek, openedIssuesByWeek, closedIssuesByWeek } = data
+      function closeDrawer() {
+        drawer.classList.remove('issue-drawer--open')
+        drawerBackdrop.classList.remove('issue-drawer-backdrop--visible')
+        drawer.setAttribute('aria-hidden', 'true')
+      }
 
-        // Prepare the data for the chart
-        const labels = notClosedIssuesByWeek.map((entry) => entry.week);
+      document.getElementById('issue-drawer-close').onclick = closeDrawer
+      drawerBackdrop.onclick = closeDrawer
+      document.addEventListener('keydown', (evt) => {
+        if (evt.key === 'Escape') closeDrawer()
+      })
 
-        const notClosedIssuesByWeekCounts = notClosedIssuesByWeek.map((entry) => entry.count);
-        const openedIssuesByWeekCounts = openedIssuesByWeek.map((entry) => entry.count);
-        const closedIssuesByWeekCounts = closedIssuesByWeek.map((entry) => entry.count);
+      function renderIssueDetails(datasetIndex, weekIndex) {
+        const week = datasetsByIndex[datasetIndex][weekIndex]
 
-        // Set up the chart
-        const ctx = document.getElementById('issuesChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Open Issues',
-              data: notClosedIssuesByWeekCounts,
-              borderColor: 'rgba(205, 202, 25, 1)',
-              backgroundColor: 'rgba(255, 255, 255, 0)',
-              borderWidth: 2,
-              fill: true,
-            }, {
-              label: 'Opened Issues By Week',
-              data: openedIssuesByWeekCounts,
-              borderColor: 'rgba(192, 0, 57, 1)',
-              backgroundColor: 'rgba(255, 255, 255, 0)',
-              borderWidth: 2,
-              fill: true,
-            }, {
-              label: 'Closed Issues By Week',
-              data: closedIssuesByWeekCounts,
-              borderColor: 'rgba(64, 155, 15, 1)',
-              backgroundColor: 'rgba(255, 255, 255, 0)',
-              borderWidth: 2,
-              fill: true,
-            }],
+        showIssuesInDrawer(
+          `${datasetLabels[datasetIndex]} – ${week ? week.week : ''}`,
+          week ? week.issues : []
+        )
+      }
+
+      function showIssuesInDrawer(title, issues) {
+        drawerTitle.textContent = title
+
+        if (!issues.length) {
+          drawerBody.innerHTML = `<p class="issues-board__hint">Nenhuma issue encontrada nesse período.</p>`
+          openDrawer()
+          return
+        }
+
+        const items = issues.map((issue) => {
+          const stateLabel = issue.state === 'opened' ? 'Aberta' : 'Fechada'
+          return `
+          <div class="issue-drawer-item">
+            <div class="issue-drawer-item__title">${escapeHtml(issue.title)}</div>
+            <div class="issue-drawer-item__meta">
+              <span class="status-badge status-badge--${issue.state}">${stateLabel}</span>
+              <span>•</span>
+              <span>${escapeHtml(issue.projectName)}</span>
+            </div>
+            <div class="issue-drawer-item__people">
+              <div><strong>Autor:</strong> ${escapeHtml(issue.author || '-')}</div>
+              <div><strong>Assignee:</strong> ${(issue.assignees || []).length ? (issue.assignees || []).map(escapeHtml).join(', ') : 'Sem assignee'}</div>
+            </div>
+            ${issue.ageDays != null ? `<div class="issue-drawer-item__people"><div><strong>Idade:</strong> ${issue.ageDays} dias</div><div><strong>Sem atividade há:</strong> ${issue.inactiveDays} dias</div></div>` : ''}
+            ${(issue.labels || []).length ? `<div class="issue-drawer-item__labels">${(issue.labels || []).map(escapeHtml).join(', ')}</div>` : ''}
+            ${issue.webUrl ? `<a href="${issue.webUrl}" class="btn btn--link issue-drawer-item__link" target="_blank" rel="noopener noreferrer">Ver no GitLab #${issue.id}</a>` : `<span>#${issue.id}</span>`}
+          </div>
+        `
+        }).join('')
+
+        drawerBody.innerHTML = items
+        openDrawer()
+      }
+
+      // Set up the chart
+      const ctx = document.getElementById('issuesChart').getContext('2d')
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartLabels,
+          datasets: [{
+            label: datasetLabels[0],
+            data: notClosedIssuesByWeekCounts,
+            borderColor: 'rgba(234, 179, 8, 1)',
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 2,
+            fill: true,
+          }, {
+            label: datasetLabels[1],
+            data: openedIssuesByWeekCounts,
+            borderColor: 'rgba(220, 38, 38, 1)',
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 2,
+            fill: true,
+          }, {
+            label: datasetLabels[2],
+            data: closedIssuesByWeekCounts,
+            borderColor: 'rgba(22, 163, 74, 1)',
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 2,
+            fill: true,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (evt, elements) => {
+            if (!elements.length) return
+            const { datasetIndex, index } = elements[0]
+            renderIssueDetails(datasetIndex, index)
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false, 
-            scales: {
-              x: {
-                type: 'category',
-                title: {
-                  display: true,
-                  text: 'Week',
-                },
-                ticks: {
-                  autoSkip: true,
-                  maxTicksLimit: 20, // Limits the number of ticks on the X axis to avoid overhead
-                },
-                reverse: false,
-              },
-              y: {
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: 'Issues Count',
-                },
-              },
+          plugins: {
+            legend: { labels: { color: 'rgba(17, 24, 39, 0.9)' } },
+            tooltip: {
+              callbacks: { title: (items) => `Semana ${fullWeekLabels[items[0].dataIndex]}` }
+            }
+          },
+          scales: {
+            x: {
+              type: 'category',
+              title: { display: true, text: 'Semana (início no domingo)', color: 'rgba(17, 24, 39, 0.9)' },
+              ticks: { autoSkip: true, maxTicksLimit: 20, maxRotation: 0, color: 'rgba(17, 24, 39, 0.7)' },
+              grid: { color: 'rgba(17, 24, 39, 0.08)' },
+              reverse: false,
+            },
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: 'Quantidade de Issues', color: 'rgba(17, 24, 39, 0.9)' },
+              ticks: { color: 'rgba(17, 24, 39, 0.7)' },
+              grid: { color: 'rgba(17, 24, 39, 0.08)' },
             },
           },
-        });
-  </script>
-</body>
+        },
+      })
+
+      const agingPoint = (issue) => ({ x: issue.ageDays, y: issue.inactiveDays, issue })
+
+      new Chart(document.getElementById('agingChart').getContext('2d'), {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            label: 'Em andamento',
+            data: agingStats.points.filter((issue) => !issue.isStale).map(agingPoint),
+            backgroundColor: 'rgba(37, 99, 235, 0.85)',
+            pointStyle: 'circle',
+            pointRadius: 5,
+            pointHoverRadius: 8,
+          }, {
+            label: `Velha e parada (${agingStats.oldDays}d+, ${agingStats.staleDays}d+ sem atividade)`,
+            data: agingStats.points.filter((issue) => issue.isStale).map(agingPoint),
+            backgroundColor: 'rgba(234, 88, 12, 0.9)',
+            pointStyle: 'triangle',
+            pointRadius: 6,
+            pointHoverRadius: 9,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (evt, elements, chart) => {
+            const tooltipElements = chart.tooltip.getActiveElements()
+            const clicked = tooltipElements.length ? tooltipElements : elements
+            if (!clicked.length) return
+
+            const issues = clicked.map(({ datasetIndex, index }) => (
+              chart.data.datasets[datasetIndex].data[index].issue
+            ))
+
+            showIssuesInDrawer(
+              issues.length === 1 ? `Issue #${issues[0].id}` : `${issues.length} issues neste ponto`,
+              issues
+            )
+          },
+          plugins: {
+            legend: { labels: { usePointStyle: true, color: 'rgba(17, 24, 39, 0.9)' } },
+            tooltip: {
+              callbacks: {
+                label: (item) => {
+                  const { issue } = item.raw
+                  return `#${issue.id} ${issue.title} (${issue.ageDays}d de idade, ${issue.inactiveDays}d sem atividade)`
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              beginAtZero: true,
+              title: { display: true, text: 'Idade da issue (dias)', color: 'rgba(17, 24, 39, 0.9)' },
+              ticks: { color: 'rgba(17, 24, 39, 0.7)' },
+              grid: { color: 'rgba(17, 24, 39, 0.08)' },
+            },
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: 'Dias sem atividade', color: 'rgba(17, 24, 39, 0.9)' },
+              ticks: { color: 'rgba(17, 24, 39, 0.7)' },
+              grid: { color: 'rgba(17, 24, 39, 0.08)' },
+            },
+          },
+        },
+      })
+    </script>
+  </body>
 </html>
+

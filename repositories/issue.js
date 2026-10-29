@@ -15,7 +15,7 @@ const getIssuesByGroupIdAndLabels = ({ clients }) => async (groupId, labels = []
 
     issues = issues.concat(response)
     if (response.length < perPage) break
-    page += page
+    page += 1
   }
 
   return issues

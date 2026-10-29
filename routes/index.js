@@ -13,9 +13,11 @@ const totalEstimated = (mrs) => mrs.reduce((total, mr) => (
 
 const sortDecreasingReviewers = (a, b) => b.totalReviews - a.totalReviews
 
-function formatDate(date) {
-  return date.toISOString().split('T')[0]
-}
+const MONTHS_PT = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+const pad = (value) => String(value).padStart(2, '0')
+
+const formatDate = (date) => `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`
+const formatShortDate = (date) => `${pad(date.getDate())} ${MONTHS_PT[date.getMonth()]}`
 
 function getLastNthMonthsWeeks(numberOfMonths = 1) {
   const now = new Date()
@@ -41,7 +43,8 @@ function getLastNthMonthsWeeks(numberOfMonths = 1) {
     weeks.push({
       beginAt: weekStart,
       endAt: weekEnd,
-      week: `${formatDate(weekStart)} to ${formatDate(weekEnd)}`
+      week: `${formatDate(weekStart)} – ${formatDate(weekEnd)}`,
+      shortLabel: formatShortDate(weekStart)
     })
 
     // Go forward one week
@@ -51,62 +54,101 @@ function getLastNthMonthsWeeks(numberOfMonths = 1) {
   return weeks
 }
 
+const getProjectNameFromReference = (reference) => reference.split('#')[0]
+const getProjectIssuesUrl = (webUrl) => (webUrl ? webUrl.replace(/\/-\/issues\/\d+.*$/, '/-/issues') : null)
+
+const summarizeIssueForBoard = (issue) => ({
+  id: issue.id,
+  title: issue.title,
+  state: issue.state,
+  labels: issue.labels,
+  webUrl: issue.webUrl,
+  projectName: getProjectNameFromReference(issue.projectReference),
+  author: issue.author ? (issue.author.name || issue.author.userName) : null,
+  assignees: (issue.assignees || []).map((user) => user.name || user.userName),
+  createdAt: issue.createdAt,
+  closedAt: issue.closedAt
+})
+
+const DAY_IN_MS = 24 * 60 * 60 * 1000
+const OLD_ISSUE_DAYS = 120
+const STALE_ISSUE_DAYS = 60
+
+const daysBetween = (from, to) => Math.max(0, Math.floor((to - from) / DAY_IN_MS))
+
+function getIssuesAging(issues, now = new Date()) {
+  const points = issues
+    .filter((issue) => issue.state === 'opened' && issue.createdAt)
+    .map((issue) => {
+      const ageDays = daysBetween(issue.createdAt, now)
+      const inactiveDays = daysBetween(issue.updatedAt || issue.createdAt, now)
+
+      return {
+        ...summarizeIssueForBoard(issue),
+        ageDays,
+        inactiveDays,
+        isStale: ageDays >= OLD_ISSUE_DAYS && inactiveDays >= STALE_ISSUE_DAYS
+      }
+    })
+
+  const inactiveCount = points.filter((point) => point.inactiveDays >= STALE_ISSUE_DAYS).length
+
+  return {
+    totalBacklog: points.length,
+    inactiveCount,
+    inactivePercent: points.length ? Math.round((inactiveCount / points.length) * 100) : 0,
+    staleCount: points.filter((point) => point.isStale).length,
+    oldDays: OLD_ISSUE_DAYS,
+    staleDays: STALE_ISSUE_DAYS,
+    points
+  }
+}
+
 function getNumberOfNotClosedIssuesByWeek(issues, weeksInterval) {
   return weeksInterval.map((week) => {
-    let count = 0
-
-    issues.forEach((issue) => {
+    const matchingIssues = issues.filter((issue) => {
       const issueWasCreatedBeforeTheWeekFinishes =
         issue.createdAt && (issue.createdAt <= week.endAt)
       const issueIsNotClosedInTheWeek = !issue.closedAt || issue.closedAt > week.endAt
 
-      if (issueWasCreatedBeforeTheWeekFinishes && issueIsNotClosedInTheWeek) count += 1
+      return issueWasCreatedBeforeTheWeekFinishes && issueIsNotClosedInTheWeek
     })
 
     return {
       ...week,
-      count
+      count: matchingIssues.length,
+      issues: matchingIssues.map(summarizeIssueForBoard)
     }
   })
 }
 
 function getNumberOfOpenedIssuesByWeek(issues, weeksInterval) {
   return weeksInterval.map((week) => {
-    let count = 0
-
-    issues.forEach((issue) => {
-      const issueWasCreatedDuringTheWeek =
-        issue.createdAt >= week.beginAt && issue.createdAt <= week.endAt
-
-      if (issueWasCreatedDuringTheWeek) count += 1
-    })
+    const matchingIssues = issues.filter((issue) => (
+      issue.createdAt >= week.beginAt && issue.createdAt <= week.endAt
+    ))
 
     return {
       ...week,
-      count
+      count: matchingIssues.length,
+      issues: matchingIssues.map(summarizeIssueForBoard)
     }
   })
 }
 
 function getNumberOfClosedIssuesByWeek(issues, weeksInterval) {
   return weeksInterval.map((week) => {
-    let count = 0
-
-    issues.forEach((issue) => {
-      const issueWasClosedDuringTheWeek =
-        issue.closedAt >= week.beginAt && issue.closedAt <= week.endAt
-
-      if (issueWasClosedDuringTheWeek) count += 1
-    })
+    const matchingIssues = issues.filter((issue) => (
+      issue.closedAt >= week.beginAt && issue.closedAt <= week.endAt
+    ))
 
     return {
       ...week,
-      count
+      count: matchingIssues.length,
+      issues: matchingIssues.map(summarizeIssueForBoard)
     }
   })
 }
-
-const getProjectNameFromReference = (reference) => reference.split('#')[0]
 
 function summarizeIssues(issues) {
   const projectStats = new Map()
@@ -123,7 +165,8 @@ function summarizeIssues(issues) {
       projectStats.set(issue.projectId, {
         projectId: issue.projectId,
         name: getProjectNameFromReference(issue.projectReference),
-        totalIssues: 0
+        totalIssues: 0,
+        issuesUrl: getProjectIssuesUrl(issue.webUrl)
       })
     }
     projectStats.get(issue.projectId).totalIssues += 1
@@ -245,11 +288,14 @@ router.get('/details/:id', (req, res) => {
 router.get('/issues/:groupId', async (req, res) => {
   const { groupId } = req.params
 
-  const { labels: labelsQueryParam = '' } = req.query
+  const { labels: labelsQueryParam = '', since: sinceQueryParam = '' } = req.query
 
   const labels = labelsQueryParam.split(',')
 
   const weeksInterval = getLastNthMonthsWeeks(4)
+
+  const since = sinceQueryParam ? new Date(`${sinceQueryParam}T00:00:00`) : null
+  const sinceIsValid = since instanceof Date && !Number.isNaN(since.getTime())
 
   req.repositories.issue.getIssuesByGroupIdAndLabels(groupId, labels).then((issues) => {
     const issuesCountByWeek = {
@@ -260,7 +306,28 @@ router.get('/issues/:groupId', async (req, res) => {
 
     const issuesSummary = summarizeIssues(issues)
 
-    res.render('issues-board', { issuesCountByWeek, labels: labelsQueryParam, issuesSummary })
+    const sinceLastCheck = sinceIsValid ? {
+      date: sinceQueryParam,
+      issues: issues
+        .filter((issue) => (
+          (issue.createdAt && issue.createdAt >= since)
+          || (issue.closedAt && issue.closedAt >= since)
+        ))
+        .map(summarizeIssueForBoard)
+        .sort((a, b) => {
+          const aDate = a.closedAt && a.closedAt >= since ? a.closedAt : a.createdAt
+          const bDate = b.closedAt && b.closedAt >= since ? b.closedAt : b.createdAt
+          return bDate - aDate
+        })
+    } : null
+
+    res.render('issues-board', {
+      issuesCountByWeek,
+      labels: labelsQueryParam,
+      issuesSummary,
+      sinceLastCheck,
+      agingStats: getIssuesAging(issues)
+    })
   }).catch((err) => {
     res.status(500)
     res.json(err)
